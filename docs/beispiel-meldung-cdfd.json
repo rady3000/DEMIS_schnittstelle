@@ -1,0 +1,654 @@
+{
+  "resourceType": "Bundle",
+  "id": "f14569c3-2598-4e3f-afed-68042195f843",
+  "meta": {
+    "profile": [
+      "https://demis.rki.de/fhir/StructureDefinition/NotificationBundleDisease"
+    ]
+  },
+  "identifier": {
+    "system": "https://demis.rki.de/fhir/NamingSystem/NotificationBundleId",
+    "value": "0eaea12e-55e7-49d9-b1f6-24abf9d7ed60"
+  },
+  "type": "document",
+  "timestamp": "2026-10-28T21:11:25.461521+00:00",
+  "entry": [
+    {
+      "fullUrl": "https://demis.rki.de/fhir/Composition/147557d9-9f5c-43c3-9d88-d4f89b92b152",
+      "resource": {
+        "resourceType": "Composition",
+        "id": "147557d9-9f5c-43c3-9d88-d4f89b92b152",
+        "meta": {
+          "profile": [
+            "https://demis.rki.de/fhir/StructureDefinition/NotificationDiseaseCDFD"
+          ]
+        },
+        "identifier": {
+          "system": "https://demis.rki.de/fhir/NamingSystem/NotificationId",
+          "value": "600f0ea2-59d7-4074-878f-61ce98f2576c"
+        },
+        "status": "final",
+        "type": {
+          "coding": [
+            {
+              "system": "http://loinc.org",
+              "code": "34782-3",
+              "display": "Infectious disease Note"
+            }
+          ]
+        },
+        "category": [
+          {
+            "coding": [
+              {
+                "system": "https://demis.rki.de/fhir/CodeSystem/notificationType",
+                "code": "6.1_2",
+                "display": "Meldung gemäß IfSG §6 Absatz 1, 2"
+              }
+            ]
+          }
+        ],
+        "subject": {
+          "reference": "Patient/fef56d9a-4fa7-4644-9cb5-9d3cd8984dc5"
+        },
+        "date": "2026-10-28T21:11:25.461521+00:00",
+        "author": [
+          {
+            "reference": "PractitionerRole/b793874f-bcdb-4ad6-86f6-728c9cb19f2b"
+          }
+        ],
+        "title": "Meldung gemäß §6 Absatz 1, 2 IfSG",
+        "section": [
+          {
+            "title": "Diagnose",
+            "code": {
+              "coding": [
+                {
+                  "system": "https://demis.rki.de/fhir/CodeSystem/sectionCode",
+                  "code": "diagnosis",
+                  "display": "Diagnose"
+                }
+              ]
+            },
+            "entry": [
+              {
+                "reference": "Condition/dd9054c0-c62d-4e17-9cdc-a0ce177b8aec"
+              }
+            ]
+          },
+          {
+            "title": "Meldetatbestandsübergreifende klinische und epidemiologische Angaben",
+            "code": {
+              "coding": [
+                {
+                  "system": "https://demis.rki.de/fhir/CodeSystem/sectionCode",
+                  "code": "generalClinAndEpiInformation",
+                  "display": "Meldetatbestandsübergreifende klinische und epidemiologische Angaben"
+                }
+              ]
+            },
+            "entry": [
+              {
+                "reference": "QuestionnaireResponse/3cb65608-73ee-4fbe-b516-aac4fd6983e8"
+              }
+            ]
+          },
+          {
+            "title": "Meldetatbestandsspezifische klinische und epidemiologische Angaben",
+            "code": {
+              "coding": [
+                {
+                  "system": "https://demis.rki.de/fhir/CodeSystem/sectionCode",
+                  "code": "specificClinAndEpiInformation",
+                  "display": "Meldetatbestandsspezifische klinische und epidemiologische Angaben"
+                }
+              ]
+            },
+            "entry": [
+              {
+                "reference": "QuestionnaireResponse/605129b5-7cc7-4d50-b48f-1dc6d3d96bcc"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "fullUrl": "https://demis.rki.de/fhir/Organization/2b735290-818a-47d3-9cec-8697f905ce3c",
+      "resource": {
+        "resourceType": "Organization",
+        "id": "2b735290-818a-47d3-9cec-8697f905ce3c",
+        "meta": {
+          "profile": [
+            "https://demis.rki.de/fhir/StructureDefinition/NotifiedPersonFacility"
+          ]
+        },
+        "type": [
+          {
+            "coding": [
+              {
+                "system": "https://demis.rki.de/fhir/CodeSystem/organizationType",
+                "code": "hospital",
+                "display": "Krankenhaus"
+              }
+            ]
+          }
+        ],
+        "name": "DRK Krankenhaus Chemnitz-Rabenstein gGmbH",
+        "address": [
+          {
+            "line": [
+              "Unritzstraße 23"
+            ],
+            "city": "Chemnitz",
+            "postalCode": "09117",
+            "country": "DE"
+          }
+        ]
+      }
+    },
+    {
+      "fullUrl": "https://demis.rki.de/fhir/Patient/fef56d9a-4fa7-4644-9cb5-9d3cd8984dc5",
+      "resource": {
+        "resourceType": "Patient",
+        "id": "fef56d9a-4fa7-4644-9cb5-9d3cd8984dc5",
+        "meta": {
+          "profile": [
+            "https://demis.rki.de/fhir/StructureDefinition/NotifiedPerson"
+          ]
+        },
+        "name": [
+          {
+            "use": "official",
+            "family": "Testpatient",
+            "given": [
+              "Anna"
+            ]
+          }
+        ],
+        "telecom": [
+          {
+            "system": "phone",
+            "value": "+49 371 0000001"
+          }
+        ],
+        "gender": "female",
+        "birthDate": "1948-03-14",
+        "address": [
+          {
+            "extension": [
+              {
+                "url": "https://demis.rki.de/fhir/StructureDefinition/AddressUse",
+                "valueCoding": {
+                  "system": "https://demis.rki.de/fhir/CodeSystem/addressUse",
+                  "code": "primary"
+                }
+              }
+            ],
+            "line": [
+              "Musterstraße 12"
+            ],
+            "city": "Chemnitz",
+            "postalCode": "09117",
+            "country": "DE"
+          },
+          {
+            "extension": [
+              {
+                "url": "https://demis.rki.de/fhir/StructureDefinition/AddressUse",
+                "valueCoding": {
+                  "system": "https://demis.rki.de/fhir/CodeSystem/addressUse",
+                  "code": "current"
+                }
+              },
+              {
+                "url": "https://demis.rki.de/fhir/StructureDefinition/FacilityAddressNotifiedPerson",
+                "valueReference": {
+                  "reference": "Organization/2b735290-818a-47d3-9cec-8697f905ce3c"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "fullUrl": "https://demis.rki.de/fhir/Condition/dd9054c0-c62d-4e17-9cdc-a0ce177b8aec",
+      "resource": {
+        "resourceType": "Condition",
+        "id": "dd9054c0-c62d-4e17-9cdc-a0ce177b8aec",
+        "meta": {
+          "profile": [
+            "https://demis.rki.de/fhir/StructureDefinition/DiseaseCDFD"
+          ]
+        },
+        "verificationStatus": {
+          "coding": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/condition-ver-status",
+              "code": "confirmed"
+            }
+          ]
+        },
+        "code": {
+          "coding": [
+            {
+              "system": "https://demis.rki.de/fhir/CodeSystem/notificationDiseaseCategory",
+              "code": "cdfd",
+              "display": "Clostridioides-difficile-Erkrankung, schwere Verlaufsform"
+            }
+          ]
+        },
+        "subject": {
+          "reference": "Patient/fef56d9a-4fa7-4644-9cb5-9d3cd8984dc5"
+        },
+        "onsetDateTime": "2026-10-10",
+        "recordedDate": "2026-10-18"
+      }
+    },
+    {
+      "fullUrl": "https://demis.rki.de/fhir/Organization/c27446d7-5e09-43ee-98ac-12c384026c9c",
+      "resource": {
+        "resourceType": "Organization",
+        "id": "c27446d7-5e09-43ee-98ac-12c384026c9c",
+        "meta": {
+          "profile": [
+            "https://demis.rki.de/fhir/StructureDefinition/NotifierFacility"
+          ]
+        },
+        "type": [
+          {
+            "coding": [
+              {
+                "system": "https://demis.rki.de/fhir/CodeSystem/organizationType",
+                "code": "hospital",
+                "display": "Krankenhaus"
+              }
+            ]
+          }
+        ],
+        "name": "DRK Krankenhaus Chemnitz-Rabenstein gGmbH",
+        "telecom": [
+          {
+            "system": "phone",
+            "value": "+49 371 0000100",
+            "use": "work"
+          }
+        ],
+        "address": [
+          {
+            "line": [
+              "Unritzstraße 23"
+            ],
+            "city": "Chemnitz",
+            "postalCode": "09117",
+            "country": "DE"
+          }
+        ],
+        "identifier": [
+          {
+            "system": "https://fhir.kbv.de/NamingSystem/KBV_NS_Base_BSNR",
+            "value": "123456789"
+          }
+        ]
+      }
+    },
+    {
+      "fullUrl": "https://demis.rki.de/fhir/Practitioner/f7ea5031-804c-4828-904d-ebcf056effcf",
+      "resource": {
+        "resourceType": "Practitioner",
+        "id": "f7ea5031-804c-4828-904d-ebcf056effcf",
+        "meta": {
+          "profile": [
+            "https://demis.rki.de/fhir/StructureDefinition/Notifier"
+          ]
+        },
+        "name": [
+          {
+            "use": "official",
+            "family": "Ärztin",
+            "given": [
+              "Test"
+            ]
+          }
+        ],
+        "telecom": [
+          {
+            "system": "phone",
+            "value": "+49 371 0000101",
+            "use": "work"
+          }
+        ]
+      }
+    },
+    {
+      "fullUrl": "https://demis.rki.de/fhir/PractitionerRole/b793874f-bcdb-4ad6-86f6-728c9cb19f2b",
+      "resource": {
+        "resourceType": "PractitionerRole",
+        "id": "b793874f-bcdb-4ad6-86f6-728c9cb19f2b",
+        "meta": {
+          "profile": [
+            "https://demis.rki.de/fhir/StructureDefinition/NotifierRole"
+          ]
+        },
+        "practitioner": {
+          "reference": "Practitioner/f7ea5031-804c-4828-904d-ebcf056effcf"
+        },
+        "organization": {
+          "reference": "Organization/c27446d7-5e09-43ee-98ac-12c384026c9c"
+        }
+      }
+    },
+    {
+      "fullUrl": "https://demis.rki.de/fhir/Organization/f0994bd5-a7bd-4a3d-8f7b-5033d5a7271f",
+      "resource": {
+        "resourceType": "Organization",
+        "id": "f0994bd5-a7bd-4a3d-8f7b-5033d5a7271f",
+        "meta": {
+          "profile": [
+            "http://hl7.org/fhir/StructureDefinition/Organization"
+          ]
+        },
+        "type": [
+          {
+            "coding": [
+              {
+                "system": "https://demis.rki.de/fhir/CodeSystem/organizationType",
+                "code": "hospitalLab",
+                "display": "Krankenhauslabor"
+              }
+            ]
+          }
+        ],
+        "name": "Labor Testlabor (synthetisch)"
+      }
+    },
+    {
+      "fullUrl": "https://demis.rki.de/fhir/Encounter/6958d972-18f6-4262-90ea-fb5eef691bfe",
+      "resource": {
+        "resourceType": "Encounter",
+        "id": "6958d972-18f6-4262-90ea-fb5eef691bfe",
+        "meta": {
+          "profile": [
+            "https://demis.rki.de/fhir/StructureDefinition/Hospitalization"
+          ]
+        },
+        "status": "finished",
+        "class": {
+          "system": "http://terminology.hl7.org/CodeSystem/v3-ActCode",
+          "code": "IMP",
+          "display": "inpatient encounter"
+        },
+        "subject": {
+          "reference": "Patient/fef56d9a-4fa7-4644-9cb5-9d3cd8984dc5"
+        },
+        "period": {
+          "start": "2026-10-12",
+          "end": "2026-10-16"
+        },
+        "serviceProvider": {
+          "reference": "Organization/2b735290-818a-47d3-9cec-8697f905ce3c"
+        },
+        "serviceType": {
+          "coding": [
+            {
+              "system": "https://demis.rki.de/fhir/CodeSystem/hospitalizationServiceType",
+              "code": "0100",
+              "display": "Innere Medizin"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "fullUrl": "https://demis.rki.de/fhir/Encounter/d10bb98f-e765-4440-ab26-c8f6d15aba91",
+      "resource": {
+        "resourceType": "Encounter",
+        "id": "d10bb98f-e765-4440-ab26-c8f6d15aba91",
+        "meta": {
+          "profile": [
+            "https://demis.rki.de/fhir/StructureDefinition/Hospitalization"
+          ]
+        },
+        "status": "in-progress",
+        "class": {
+          "system": "http://terminology.hl7.org/CodeSystem/v3-ActCode",
+          "code": "IMP",
+          "display": "inpatient encounter"
+        },
+        "subject": {
+          "reference": "Patient/fef56d9a-4fa7-4644-9cb5-9d3cd8984dc5"
+        },
+        "period": {
+          "start": "2026-10-16"
+        },
+        "serviceProvider": {
+          "reference": "Organization/2b735290-818a-47d3-9cec-8697f905ce3c"
+        },
+        "serviceType": {
+          "coding": [
+            {
+              "system": "https://demis.rki.de/fhir/CodeSystem/hospitalizationServiceType",
+              "code": "3600",
+              "display": "Intensivmedizin"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "fullUrl": "https://demis.rki.de/fhir/QuestionnaireResponse/3cb65608-73ee-4fbe-b516-aac4fd6983e8",
+      "resource": {
+        "resourceType": "QuestionnaireResponse",
+        "id": "3cb65608-73ee-4fbe-b516-aac4fd6983e8",
+        "meta": {
+          "profile": [
+            "https://demis.rki.de/fhir/StructureDefinition/DiseaseInformationCommon"
+          ]
+        },
+        "questionnaire": "https://demis.rki.de/fhir/Questionnaire/DiseaseQuestionsCommon",
+        "status": "completed",
+        "subject": {
+          "reference": "Patient/fef56d9a-4fa7-4644-9cb5-9d3cd8984dc5"
+        },
+        "item": [
+          {
+            "linkId": "isDead",
+            "answer": [
+              {
+                "valueCoding": {
+                  "system": "https://demis.rki.de/fhir/CodeSystem/yesOrNoAnswer",
+                  "code": "no",
+                  "display": "Nein"
+                }
+              }
+            ]
+          },
+          {
+            "linkId": "militaryAffiliation",
+            "answer": [
+              {
+                "valueCoding": {
+                  "system": "https://demis.rki.de/fhir/CodeSystem/militaryAffiliation",
+                  "code": "noReferenceToBundeswehr",
+                  "display": "Kein Bezug zur BW"
+                }
+              }
+            ]
+          },
+          {
+            "linkId": "labSpecimenTaken",
+            "answer": [
+              {
+                "valueCoding": {
+                  "system": "https://demis.rki.de/fhir/CodeSystem/yesOrNoAnswer",
+                  "code": "yes",
+                  "display": "Ja"
+                },
+                "item": [
+                  {
+                    "linkId": "labSpecimenLab",
+                    "answer": [
+                      {
+                        "valueReference": {
+                          "reference": "Organization/f0994bd5-a7bd-4a3d-8f7b-5033d5a7271f"
+                        }
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "linkId": "hospitalized",
+            "answer": [
+              {
+                "valueCoding": {
+                  "system": "https://demis.rki.de/fhir/CodeSystem/yesOrNoAnswer",
+                  "code": "yes",
+                  "display": "Ja"
+                },
+                "item": [
+                  {
+                    "linkId": "hospitalizedGroup",
+                    "item": [
+                      {
+                        "linkId": "hospitalizedEncounter",
+                        "answer": [
+                          {
+                            "valueReference": {
+                              "reference": "Encounter/6958d972-18f6-4262-90ea-fb5eef691bfe"
+                            }
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "linkId": "hospitalizedGroup",
+                    "item": [
+                      {
+                        "linkId": "hospitalizedEncounter",
+                        "answer": [
+                          {
+                            "valueReference": {
+                              "reference": "Encounter/d10bb98f-e765-4440-ab26-c8f6d15aba91"
+                            }
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "linkId": "infectProtectFacility",
+            "answer": [
+              {
+                "valueCoding": {
+                  "system": "https://demis.rki.de/fhir/CodeSystem/yesOrNoAnswer",
+                  "code": "no",
+                  "display": "Nein"
+                }
+              }
+            ]
+          },
+          {
+            "linkId": "placeExposure",
+            "answer": [
+              {
+                "valueCoding": {
+                  "system": "https://demis.rki.de/fhir/CodeSystem/yesOrNoAnswer",
+                  "code": "no",
+                  "display": "Nein"
+                }
+              }
+            ]
+          },
+          {
+            "linkId": "organDonation",
+            "answer": [
+              {
+                "valueCoding": {
+                  "system": "https://demis.rki.de/fhir/CodeSystem/yesOrNoAnswer",
+                  "code": "no",
+                  "display": "Nein"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "fullUrl": "https://demis.rki.de/fhir/QuestionnaireResponse/605129b5-7cc7-4d50-b48f-1dc6d3d96bcc",
+      "resource": {
+        "resourceType": "QuestionnaireResponse",
+        "id": "605129b5-7cc7-4d50-b48f-1dc6d3d96bcc",
+        "meta": {
+          "profile": [
+            "https://demis.rki.de/fhir/StructureDefinition/DiseaseInformationCDFD"
+          ]
+        },
+        "questionnaire": "https://demis.rki.de/fhir/Questionnaire/DiseaseQuestionsCDFD",
+        "status": "completed",
+        "subject": {
+          "reference": "Patient/fef56d9a-4fa7-4644-9cb5-9d3cd8984dc5"
+        },
+        "item": [
+          {
+            "linkId": "form",
+            "answer": [
+              {
+                "valueCoding": {
+                  "system": "http://snomed.info/sct",
+                  "code": "186431008:{288556008=305351004}",
+                  "display": "Aufnahme auf eine Intensivstation aufgrund einer C.-difficile-Infektion oder ihrer Komplikationen"
+                }
+              }
+            ]
+          },
+          {
+            "linkId": "immunization",
+            "answer": [
+              {
+                "valueCoding": {
+                  "system": "https://demis.rki.de/fhir/CodeSystem/yesOrNoAnswer",
+                  "code": "no",
+                  "display": "Nein"
+                }
+              }
+            ]
+          },
+          {
+            "linkId": "method",
+            "answer": [
+              {
+                "valueCoding": {
+                  "system": "http://snomed.info/sct",
+                  "code": "117963005:{363701004=39477002}",
+                  "display": "Nachweis von C.-difficile-Toxin A und/oder B aus Stuhl"
+                }
+              }
+            ]
+          },
+          {
+            "linkId": "outbreak",
+            "answer": [
+              {
+                "valueCoding": {
+                  "system": "https://demis.rki.de/fhir/CodeSystem/yesOrNoAnswer",
+                  "code": "no",
+                  "display": "Nein"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

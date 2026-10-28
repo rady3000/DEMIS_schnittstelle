@@ -2,6 +2,21 @@
 
 ## [Unveröffentlicht]
 
+### Phase 3 – Meldungs-Erzeugung und Validierung (abgeschlossen, 28.10.2026)
+- Mapper `meldeassistent.demis`: aus internem KIS-Modell + Meldeangaben entsteht ein DEMIS-Bundle (`NotificationBundleDisease`) für C. difficile (CDFD), Tuberkulose (MYTD) und Masern (MSVD).
+- Katalog der DEMIS-Pakete (`pakete.py`): Fragebögen und Wertemengen direkt aus den Paketen, auch verschachtelte Codes.
+- Fragebogen-Builder und -Prüfer (`fragebogen.py`): Pflichtfragen, Bedingungen, Antworttyp, Zugehörigkeit zur Wertemenge; strenger Modus meldet unbeantwortete Fragen als „offen“.
+  Geprüft an den offiziellen RKI-Beispielen (Round-Trip). Dabei zwei veraltete Antworten in den offiziellen Beispielen gefunden (siehe OFFENE_FRAGEN).
+- Anbindung des offiziellen HL7-Validators 7.0.3 (Server-Modus) mit DEMIS-Paketen 3.0.0; Konfiguration und Begründung in `validator.py`/PLAN.md.
+- Deutsche Fehlertexte (`fehlertexte.py`): Pflichtangaben, ungültige Codes, Folgefehler werden ausgeblendet, Rauschen herausgefiltert, Original bleibt für die IT.
+- Vorbelegung aus dem KIS (`vorbelegung.py`) mit Herkunft je Angabe (kis / auto / arzt) für die farbige Kennzeichnung in Phase 4.
+- `tools/einrichten.py` lädt Validator und Pakete mit festen SHA-256-Prüfsummen. `python -m meldeassistent.demis --fall cdi` baut und prüft eine Demo-Meldung (sendet nichts).
+- Akzeptanz erfüllt: Für alle vier DEMIS-Testfälle (1, 2, 3, 7) entsteht eine Meldung, die der Validator ohne Fehler akzeptiert; Fragebogen-Prüfung ohne Befund.
+- Datenschutz: Keine KIS-internen IDs, kein KIS-Freitext, keine ICD-Codes oder Laborwerte in der Meldung (getestet).
+- Tests: 212 (davon Validator-Tests mit selbst gestartetem Java-Prozess). Mutationsprüfung: absichtliche Fehler werden erkannt.
+- Behoben: Einrichtungsart `hospital` liegt im Codesystem verschachtelt unter `medFacility` (frühere Auflistung im Feldmapping war falsch).
+- Wichtigste Erkenntnisse: Öffentliche Terminologieserver kennen die deutsche SNOMED-Edition nicht; DEMIS belegt alle Pflichtfragen mit „nicht erhoben“ vor.
+
 ### Nachträge nach Phase 2 (28.10.2026)
 - Repository auf GitHub (`rady3000/DEMIS_schnittstelle`), Stand der Phasen 0–2 hochgeladen.
 - Behoben: `pydantic` fehlte in `pyproject.toml` (in frischer Umgebung aufgefallen).

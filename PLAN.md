@@ -157,6 +157,17 @@ demis-meldeassistent/
 | Labor | Zuerst manuell/FHIR-optional; Adapter erlaubt HL7-v2-ORU. Für ISiK gibt es ein eigenes Labormodul (`de.gematik.isik-labor`) | NEXUS-Labor-Schnittstelle offen |
 | Konfiguration | Endpunkt-Basis und Profil-Version als Einstellung; Standard = Testumgebung | Endpunkte ändern sich (neue versionierte Pfade `v6/v7`) |
 
+### Prüfung der Meldung in zwei Schichten (Stand Phase 3)
+
+Jede Meldung wird vor dem Versand zweifach geprüft; beide Ergebnisse erscheinen gemeinsam auf Deutsch (`meldung.py`, `fehlertexte.py`):
+
+1. **Offizieller HL7-Validator** (Java, Server-Modus, ca. 1 s je Meldung): Aufbau, Profile, Pflichtfelder, DEMIS-eigene Codes (Meldetatbestand, Einrichtungsart, Ja/Nein, Meldetyp), Geschlecht, Zeitangaben.
+   Start ohne externen Terminologieserver (`-tx n/a`): Der öffentliche Server kennt die deutschen SNOMED-Erweiterungscodes nicht, und selbst die offiziellen RKI-Beispiele fielen dort durch.
+2. **Eigener Fragebogen-Prüfer** (`fragebogen.py`): Pflichtfragen, Bedingungen (`enableWhen`), Antworttyp und Zugehörigkeit der Antwort zu den in den DEMIS-Wertemengen aufgezählten Antworten (SNOMED, Länder, Regionen). Er wurde gegen die offiziellen Beispiele geprüft.
+   Im **strengen Modus** meldet er zusätzlich Fragen, die noch auf „nicht erhoben“ (NASK) stehen: DEMIS erlaubt das formal, der Meldeassistent verlangt aber eine aktive Antwort.
+
+Das Ergebnis trennt `fehler` (DEMIS würde ablehnen), `offen` (noch nicht beantwortet) und `hinweis`.
+
 ## 9. Quellen (am 28.10.2026 gelesen)
 - RKI-Vorabveröffentlichung: `https://robert-koch-institut.github.io/DEMIS_FHIR-Profile_Vorabveroeffentlichung/` (Repository per `git clone` gelesen, Stand 20.04.2026)
 - FHIR-Pakete: `https://packages2.fhir.org/packages/rki.demis.disease` und `…/rki.demis.common` (Version 3.0.0)

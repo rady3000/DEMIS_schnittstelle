@@ -17,7 +17,7 @@ Was nicht geprüft werden konnte, ist mit **[UNGEPRÜFT]** markiert.
 | Geburtsdatum | `Patient.birthDate` | `NotifiedPerson.birthDate` (Prüfregel `validBirthDate`) | optional im Profil, in der Praxis immer senden | KIS |
 | Geschlecht | `Patient.gender` + Erweiterung `gender-amtlich-de` | `NotifiedPerson.gender` + gleiche Erweiterung | **Pflicht** | KIS |
 | Wohnsitz | `Patient.address:Strassenanschrift` (Straße/Nr., PLZ, Ort) | `NotifiedPerson.address` (bis 3 Adressen, `line` bis 3, `postalCode`, `city`, `country`) mit Pflicht-Erweiterung `AddressUse` = `primary` (Hauptwohnsitz) / `ordinary` (gewöhnlicher Aufenthalt) | Adresse optional; wenn vorhanden `AddressUse` **Pflicht** | KIS + Auto (`AddressUse`), Arzt bestätigt |
-| Aufenthaltsort (hier: Klinik) | Klinik: Konfiguration; Station/Zimmer: `ISiKKontaktGesundheitseinrichtung.location` | zusätzliche `NotifiedPerson.address` mit `AddressUse` = `current` und Erweiterung `FacilityAddressNotifiedPerson` → Ressource `NotifiedPersonFacility` (Name, Typ `medFacility`, Adresse) | optional | Auto |
+| Aufenthaltsort (hier: Klinik) | Klinik: Konfiguration; Station/Zimmer: `ISiKKontaktGesundheitseinrichtung.location` | zusätzliche `NotifiedPerson.address` mit `AddressUse` = `current` und Erweiterung `FacilityAddressNotifiedPerson` → Ressource `NotifiedPersonFacility` (Name, Typ `hospital` = Krankenhaus, Adresse) | optional | Auto |
 | Kontakt (Telefon, E-Mail) | `Patient.telecom` (`system`, `value`) | `NotifiedPerson.telecom` (Slices `Email`, `Phone`, mit Kommentar-Erweiterung) | optional | KIS, Arzt ergänzt |
 | Gestorben am / Verstorben | `Patient.deceased[x]` (Basis-FHIR, in ISiK nicht eigens profiliert) **[UNGEPRÜFT: ob NEXUS es füllt]** | `QR(Common): isDead` (Frage Pflicht, Vorbelegung `NASK`) und `deathDate` (optional, nur bei `isDead = yes`) | `isDead` **Pflicht** | KIS + Arzt bestätigt |
 | Geburtsland, Staatsangehörigkeit, Einreisejahr | nicht im ISiK-Basismodul | `QR(MYTD/HBVD/HCVD): countryOfBirth`, `nationality` (beide Pflicht), `yearOfEntry` (bed.: Geburtsland ≠ DE) | nur bei TB, Hepatitis B, Hepatitis C **Pflicht**; sonst **kein Ziel** | Arzt |
@@ -117,3 +117,26 @@ Kontaktpersonen, Infektionsquelle (außer HIV), Sofortmaßnahmen. Diese Felder b
 sichtbar, gehen aber **nur in die sächsische Landesmeldung bzw. das PDF**, nicht in die DEMIS-Meldung.
 Umgekehrt verlangt DEMIS Angaben, die das Papierformular nicht kennt (Bundeswehr, Ausbruchszuordnung,
 Hospitalisierung je Fachabteilung, Impfinformationen als eigene Ressource).
+
+## I. Umsetzungsstand Phase 3 (Mapper `src/meldeassistent/demis/mapper.py`)
+
+Umgesetzt für **CDFD** (C. difficile schwer), **MYTD** (Tuberkulose) und **MSVD** (Masern), jeweils mit dem gemeinsamen Fragebogen (`Common`):
+
+| DEMIS-Teil | Quelle im Mapper | Status |
+|---|---|---|
+| Bundle, Composition (Kategorie `6.1_2`, 3 Abschnitte), Autor | feste Struktur + Melder | umgesetzt, validiert |
+| NotifiedPerson (Name, Telefon/E-Mail, Geschlecht inkl. divers/unbestimmt, Geburtsdatum, Hauptwohnsitz) | KIS (`KisFall.patient`) | umgesetzt, validiert |
+| NotifiedPersonFacility (Klinik als derzeitiger Aufenthaltsort, `AddressUse = current`) | Konfiguration | umgesetzt, validiert |
+| Disease<K> (Meldetatbestand, Verdacht/bestätigt, Erkrankungsbeginn, Diagnosedatum) | KIS-Diagnose + Arztangaben | umgesetzt, validiert |
+| Hospitalization (je Aufenthaltsabschnitt, Fachabteilung inkl. ITS `3600`) | KIS (`Aufenthalt.abschnitte`) | umgesetzt, validiert. **Offen:** ob je Abschnitt eine eigene Ressource gemeldet werden soll |
+| Notifier, NotifierRole, NotifierFacility (inkl. BSNR, DEMIS-Teilnehmer-ID optional) | Konfiguration + angemeldeter Benutzer | umgesetzt, validiert |
+| Labor-Organization (`labSpecimenLab`) | Konfiguration (Hauslabor) | umgesetzt, validiert |
+| Immunization (Impfstoff aus `vaccine<K>`, Datum, Anmerkung) | Arztangaben | umgesetzt, durch Tests geprüft |
+| Masern-Symptome (`Condition.evidence`, aus `evidenceMSVD`) | Arztangaben | umgesetzt, validiert |
+| Fragebogen `Common` und krankheitsspezifisch | Vorbelegung (KIS) + Arztangaben | umgesetzt; Pflichtfragen und Bedingungen werden geprüft |
+| `isDead`/`deathDate` | KIS (`Patient.deceased[x]`, Entlassungsgrund Tod) | umgesetzt, validiert (Fall 7) |
+
+**Noch nicht umgesetzt** (Entscheidung für Phase 4):
+- „Tätigkeit in einer infektionsschutzrelevanten Einrichtung“ mit **Ja** (`infectProtectFacility = yes`): braucht eine eigene Organization-Ressource für die Einrichtung; die Prüfung meldet die Lücke, der Mapper erzeugt sie noch nicht.
+- Die übrigen 46 Krankheiten (nur die drei der Testfälle sind implementiert).
+- `HospitalizationNote` / `HospitalizationRegion` (optionale Erweiterungen).

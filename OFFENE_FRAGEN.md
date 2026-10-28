@@ -26,6 +26,14 @@ Stand: 28.10.2026 · Erledigt = ☑, offen = ☐.
   Welchen Terminologieserver nutzt der Validator, und ist SNOMED-Lizenzierung für uns relevant?
 - ☐ **Mehrere Krankenhausabschnitte:** Wird ein Aufenthalt Normalstation → ITS als eine oder als mehrere `Hospitalization`-Ressourcen gemeldet?
   (Die Beispiele im Paket zeigen je eine Ressource mit einer Fachabteilung.)
+- ☐ **Offizielle Beispiele sind veraltet gegenüber Paket 3.0.0:** Im CDFD-Beispiel steht der Methodencode ohne geschweifte Klammern (`117963005:363701004=386126001`),
+  die Wertemenge verlangt `117963005:{363701004=386126001}`; im MYTD-Beispiel hat die Region das Codesystem `snomed`, die Wertemenge `geographicRegion`. Wir folgen den Wertemengen.
+  In Phase 5 an der DEMIS-Testumgebung bestätigen (und beim RKI nachfragen, welche Fassung gilt).
+- ☐ **Anschriftsart:** Wir senden die KIS-Wohnanschrift als `primary` (Hauptwohnsitz) und die Klinik als `current`. Ist `ordinary` (gewöhnlicher Aufenthalt) passender?
+- ☐ **Meldende Person (`Notifier`):** Wir senden Name und Telefon der Ärztin/des Arztes mit. Das Profil lässt die Person optional (das RKI-Beispiel hat sie nicht). Gewünscht?
+- ☐ **BSNR:** Wir senden die Betriebsstättennummer mit dem Namensraum `https://fhir.kbv.de/NamingSystem/KBV_NS_Base_BSNR` (vom Validator akzeptiert). Bestätigen, dass DEMIS diese Kennung auswertet.
+- ☐ **Validator ohne Terminologieserver:** Ist unser Vorgehen (`-tx n/a` plus eigene Fragebogen-Prüfung) vom RKI so empfohlen, oder gibt es einen offiziellen Weg, die deutsche SNOMED-Edition zu nutzen?
+- ☐ **Verdachtsmeldung bei C. difficile:** Wir senden `unconfirmed`, wenn die KIS-Diagnose „Verdacht“ ist. Ist ein Verdacht beim Meldetatbestand „schwere Verlaufsform“ in DEMIS zulässig?
 - ☐ Fehlende Felder des Papierformulars (Beatmung, Symptome, Isolierung …): Bestätigen, dass DEMIS sie in der Arztmeldung nicht vorsieht.
 
 ## 2. An NEXUS

@@ -38,3 +38,41 @@ def adapter(request):
         url = request.getfixturevalue("live_bereit")
         with IsikFhirAdapter(url) as a:
             yield a
+
+
+# --- DEMIS (Phase 3) -------------------------------------------------------------------------
+import os
+import subprocess
+from pathlib import Path
+
+from meldeassistent.demis import validator as validator_modul
+from meldeassistent.demis.pakete import PaketeFehlen, standard_pakete
+
+
+@pytest.fixture(scope="session")
+def pakete():
+    try:
+        return standard_pakete()
+    except PaketeFehlen as fehler:
+        pytest.skip(str(fehler))
+
+
+@pytest.fixture(scope="session")
+def validator(tmp_path_factory):
+    """Der FHIR-Validator: ein schon laufender (VALIDATOR_URL / Port 8090) oder ein eigener Unterprozess."""
+    vorhanden = validator_modul.FhirValidator()
+    if vorhanden.ist_bereit():
+        yield vorhanden
+        return
+    if not validator_modul.JAR.exists():
+        pytest.skip("Validator fehlt: python tools/einrichten.py")
+    port = validator_modul.freier_port()
+    log = tmp_path_factory.mktemp("validator") / "validator.log"
+    try:
+        prozess = validator_modul.starte_server(port, log)
+    except validator_modul.ValidatorFehler as fehler:
+        pytest.skip(str(fehler))
+    try:
+        yield validator_modul.FhirValidator(f"http://localhost:{port}")
+    finally:
+        prozess.terminate()
