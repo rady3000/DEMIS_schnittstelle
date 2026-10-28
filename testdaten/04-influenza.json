@@ -1,0 +1,452 @@
+{
+  "resourceType": "Bundle",
+  "type": "transaction",
+  "entry": [
+    {
+      "resource": {
+        "resourceType": "Patient",
+        "id": "pat-04-influenza-grippe",
+        "meta": {
+          "tag": [
+            {
+              "system": "https://meldeassistent.test/tags",
+              "code": "SYNTHETISCH",
+              "display": "Synthetischer Testdatensatz"
+            },
+            {
+              "system": "https://meldeassistent.test/testfall",
+              "code": "04-influenza"
+            }
+          ],
+          "profile": [
+            "https://gematik.de/fhir/isik/StructureDefinition/ISiKPatient"
+          ]
+        },
+        "identifier": [
+          {
+            "type": {
+              "coding": [
+                {
+                  "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+                  "code": "MR"
+                }
+              ]
+            },
+            "system": "https://meldeassistent.test/sid/patientennummer",
+            "value": "TEST-04-grippe"
+          }
+        ],
+        "active": true,
+        "name": [
+          {
+            "use": "official",
+            "family": "Testpatient",
+            "given": [
+              "Dieter"
+            ]
+          }
+        ],
+        "telecom": [
+          {
+            "system": "phone",
+            "value": "+49 371 0000004",
+            "use": "home"
+          }
+        ],
+        "gender": "male",
+        "birthDate": "1952-11-30",
+        "address": [
+          {
+            "type": "both",
+            "line": [
+              "Teststraße 3"
+            ],
+            "_line": [
+              {
+                "extension": [
+                  {
+                    "url": "http://hl7.org/fhir/StructureDefinition/iso21090-ADXP-streetName",
+                    "valueString": "Teststraße"
+                  },
+                  {
+                    "url": "http://hl7.org/fhir/StructureDefinition/iso21090-ADXP-houseNumber",
+                    "valueString": "3"
+                  }
+                ]
+              }
+            ],
+            "city": "Chemnitz",
+            "postalCode": "09126",
+            "country": "DE"
+          }
+        ]
+      },
+      "request": {
+        "method": "PUT",
+        "url": "Patient/pat-04-influenza-grippe"
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "Encounter",
+        "id": "enc-04-influenza-grippe-einr",
+        "meta": {
+          "tag": [
+            {
+              "system": "https://meldeassistent.test/tags",
+              "code": "SYNTHETISCH",
+              "display": "Synthetischer Testdatensatz"
+            },
+            {
+              "system": "https://meldeassistent.test/testfall",
+              "code": "04-influenza"
+            }
+          ],
+          "profile": [
+            "https://gematik.de/fhir/isik/StructureDefinition/ISiKKontaktGesundheitseinrichtung"
+          ]
+        },
+        "extension": [
+          {
+            "url": "http://fhir.de/StructureDefinition/Aufnahmegrund",
+            "extension": [
+              {
+                "url": "ErsteUndZweiteStelle",
+                "valueCoding": {
+                  "system": "http://fhir.de/CodeSystem/dkgev/AufnahmegrundErsteUndZweiteStelle",
+                  "code": "01",
+                  "display": "Krankenhausbehandlung, vollstationär"
+                }
+              }
+            ]
+          }
+        ],
+        "identifier": [
+          {
+            "type": {
+              "coding": [
+                {
+                  "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+                  "code": "VN"
+                }
+              ]
+            },
+            "system": "https://meldeassistent.test/sid/besuchsnummer",
+            "value": "TEST-04-grippe"
+          }
+        ],
+        "status": "in-progress",
+        "class": {
+          "system": "http://terminology.hl7.org/CodeSystem/v3-ActCode",
+          "code": "IMP"
+        },
+        "type": [
+          {
+            "coding": [
+              {
+                "system": "http://fhir.de/CodeSystem/Kontaktebene",
+                "code": "einrichtungskontakt"
+              }
+            ]
+          }
+        ],
+        "subject": {
+          "reference": "Patient/pat-04-influenza-grippe"
+        },
+        "period": {
+          "start": "2026-10-25T20:10:00+01:00"
+        },
+        "diagnosis": [
+          {
+            "condition": {
+              "reference": "Condition/cond-04-influenza-grippe"
+            },
+            "use": {
+              "coding": [
+                {
+                  "system": "http://fhir.de/CodeSystem/KontaktDiagnoseProzedur",
+                  "code": "treatment-diagnosis"
+                }
+              ]
+            },
+            "rank": 1
+          }
+        ]
+      },
+      "request": {
+        "method": "PUT",
+        "url": "Encounter/enc-04-influenza-grippe-einr"
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "Encounter",
+        "id": "enc-04-influenza-grippe-abt1",
+        "meta": {
+          "tag": [
+            {
+              "system": "https://meldeassistent.test/tags",
+              "code": "SYNTHETISCH",
+              "display": "Synthetischer Testdatensatz"
+            },
+            {
+              "system": "https://meldeassistent.test/testfall",
+              "code": "04-influenza"
+            }
+          ],
+          "profile": [
+            "https://gematik.de/fhir/isik/StructureDefinition/ISiKKontaktGesundheitseinrichtung"
+          ]
+        },
+        "identifier": [
+          {
+            "type": {
+              "coding": [
+                {
+                  "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+                  "code": "VN"
+                }
+              ]
+            },
+            "system": "https://meldeassistent.test/sid/besuchsnummer",
+            "value": "TEST-04-grippe-1"
+          }
+        ],
+        "status": "in-progress",
+        "class": {
+          "system": "http://terminology.hl7.org/CodeSystem/v3-ActCode",
+          "code": "IMP"
+        },
+        "type": [
+          {
+            "coding": [
+              {
+                "system": "http://fhir.de/CodeSystem/Kontaktebene",
+                "code": "abteilungskontakt"
+              }
+            ]
+          }
+        ],
+        "serviceType": {
+          "coding": [
+            {
+              "system": "http://fhir.de/CodeSystem/dkgev/Fachabteilungsschluessel",
+              "code": "0100",
+              "display": "Innere Medizin"
+            }
+          ]
+        },
+        "subject": {
+          "reference": "Patient/pat-04-influenza-grippe"
+        },
+        "period": {
+          "start": "2026-10-25T20:10:00+01:00"
+        },
+        "location": [
+          {
+            "location": {
+              "reference": "Location/loc-3a",
+              "display": "Station 3A (Innere)"
+            },
+            "status": "active",
+            "physicalType": {
+              "coding": [
+                {
+                  "system": "http://terminology.hl7.org/CodeSystem/location-physical-type",
+                  "code": "wa"
+                }
+              ]
+            }
+          }
+        ],
+        "partOf": {
+          "reference": "Encounter/enc-04-influenza-grippe-einr"
+        }
+      },
+      "request": {
+        "method": "PUT",
+        "url": "Encounter/enc-04-influenza-grippe-abt1"
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "Condition",
+        "id": "cond-04-influenza-grippe",
+        "meta": {
+          "tag": [
+            {
+              "system": "https://meldeassistent.test/tags",
+              "code": "SYNTHETISCH",
+              "display": "Synthetischer Testdatensatz"
+            },
+            {
+              "system": "https://meldeassistent.test/testfall",
+              "code": "04-influenza"
+            }
+          ],
+          "profile": [
+            "https://gematik.de/fhir/isik/StructureDefinition/ISiKDiagnose"
+          ]
+        },
+        "clinicalStatus": {
+          "coding": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/condition-clinical",
+              "code": "active"
+            }
+          ]
+        },
+        "verificationStatus": {
+          "coding": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/condition-ver-status",
+              "code": "confirmed"
+            }
+          ]
+        },
+        "code": {
+          "coding": [
+            {
+              "system": "http://fhir.de/CodeSystem/bfarm/icd-10-gm",
+              "version": "2026",
+              "code": "J10.1",
+              "extension": [
+                {
+                  "url": "http://fhir.de/StructureDefinition/icd-10-gm-diagnosesicherheit",
+                  "valueCoding": {
+                    "system": "https://fhir.kbv.de/CodeSystem/KBV_CS_SFHIR_ICD_DIAGNOSESICHERHEIT",
+                    "code": "G",
+                    "display": "gesicherte Diagnose"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "subject": {
+          "reference": "Patient/pat-04-influenza-grippe"
+        },
+        "encounter": {
+          "reference": "Encounter/enc-04-influenza-grippe-einr"
+        },
+        "onsetDateTime": "2026-10-23",
+        "recordedDate": "2026-10-26",
+        "note": [
+          {
+            "text": "Synthetischer Testfall: Influenza, PCR positiv."
+          }
+        ]
+      },
+      "request": {
+        "method": "PUT",
+        "url": "Condition/cond-04-influenza-grippe"
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "Observation",
+        "id": "obs-04-influenza-grippe",
+        "meta": {
+          "tag": [
+            {
+              "system": "https://meldeassistent.test/tags",
+              "code": "SYNTHETISCH",
+              "display": "Synthetischer Testdatensatz"
+            },
+            {
+              "system": "https://meldeassistent.test/testfall",
+              "code": "04-influenza"
+            }
+          ]
+        },
+        "status": "final",
+        "category": [
+          {
+            "coding": [
+              {
+                "system": "http://terminology.hl7.org/CodeSystem/observation-category",
+                "code": "laboratory"
+              }
+            ]
+          }
+        ],
+        "code": {
+          "text": "Influenza-A-Virus, PCR (Rachenabstrich)"
+        },
+        "subject": {
+          "reference": "Patient/pat-04-influenza-grippe"
+        },
+        "encounter": {
+          "reference": "Encounter/enc-04-influenza-grippe-einr"
+        },
+        "effectiveDateTime": "2026-10-26T08:45:00+01:00",
+        "valueString": "nachgewiesen"
+      },
+      "request": {
+        "method": "PUT",
+        "url": "Observation/obs-04-influenza-grippe"
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "DiagnosticReport",
+        "id": "lab-04-influenza-grippe",
+        "meta": {
+          "tag": [
+            {
+              "system": "https://meldeassistent.test/tags",
+              "code": "SYNTHETISCH",
+              "display": "Synthetischer Testdatensatz"
+            },
+            {
+              "system": "https://meldeassistent.test/testfall",
+              "code": "04-influenza"
+            }
+          ]
+        },
+        "identifier": [
+          {
+            "system": "https://meldeassistent.test/sid/labornummer",
+            "value": "L-2026-100004"
+          }
+        ],
+        "status": "final",
+        "category": [
+          {
+            "coding": [
+              {
+                "system": "http://terminology.hl7.org/CodeSystem/v2-0074",
+                "code": "LAB"
+              }
+            ]
+          }
+        ],
+        "code": {
+          "text": "Influenza-A-Virus, PCR (Rachenabstrich)"
+        },
+        "subject": {
+          "reference": "Patient/pat-04-influenza-grippe"
+        },
+        "encounter": {
+          "reference": "Encounter/enc-04-influenza-grippe-einr"
+        },
+        "effectiveDateTime": "2026-10-26T08:45:00+01:00",
+        "issued": "2026-10-26T08:45:00+01:00",
+        "performer": [
+          {
+            "reference": "Organization/org-labor-test"
+          }
+        ],
+        "result": [
+          {
+            "reference": "Observation/obs-04-influenza-grippe"
+          }
+        ]
+      },
+      "request": {
+        "method": "PUT",
+        "url": "DiagnosticReport/lab-04-influenza-grippe"
+      }
+    }
+  ]
+}

@@ -1,0 +1,26 @@
+# Geheimnisse (Harte Regel 4): niemals einchecken
+*.pem
+*.key
+*.p12
+*.pfx
+*.jks
+*.crt
+secrets/
+.env
+.env.*
+!.env.example
+
+# Meldeinhalte und Quittungen (Harte Regel 5)
+data/
+quittungen/
+*.log
+
+# Python / Tooling
+__pycache__/
+.venv/
+.pytest_cache/
+*.egg-info/
+
+# Validator und FHIR-Pakete (werden per Skript geladen)
+tools/*.jar
+.fhir/

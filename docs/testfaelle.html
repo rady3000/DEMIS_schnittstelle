@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="de"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Testfälle Schein-KIS</title>
+<style>
+ body { font-family: system-ui, sans-serif; margin: 16px; color: #1b1b1b; }
+ table { border-collapse: collapse; width: 100%; font-size: 14px; }
+ th, td { border: 1px solid #c9c9c9; padding: 6px 8px; vertical-align: top; text-align: left; }
+ th { background: #eef2f6; }
+ td.demis { background: #e6f4ea; } td.sachsen { background: #fff4d6; } td.offen { background: #fde7e7; }
+ .hinweis { background: #eef2f6; padding: 8px 12px; margin-bottom: 12px; }
+</style></head><body>
+<h1>Testfälle im Schein-KIS</h1>
+<p class="hinweis">Alle Daten sind frei erfunden (synthetisch). Keine echten Patienten.</p>
+<div style="overflow-x:auto"><table>
+<tr><th>Nr.</th><th>Fall</th><th>Patient</th><th>Status</th><th>Station(en)</th><th>Diagnose (ICD-10-GM)</th><th>Labor</th><th>Erwarteter Meldeweg</th></tr>
+<tr><td rowspan='1'>1</td><td rowspan='1'><b>C. difficile, schwere Verlaufsform, Verlegung auf ITS</b></td><td>Anna Testpatient</td><td>lebend</td><td>Station 3A (Innere) → Intensivstation 1</td><td>A04.71 (gesichert)</td><td>ja</td><td rowspan='1' class='demis'><b>DEMIS (CDFD)</b><br><small>§ 6 Abs. 1 IfSG: C. difficile schwere Verlaufsform (NotificationDiseaseCDFD)</small></td></tr>
+<tr><td rowspan='1'>2</td><td rowspan='1'><b>Offene Lungentuberkulose (mikroskopisch positiv)</b></td><td>Boris Testpatient</td><td>lebend</td><td>Isolierstation 2 (Pneumologie)</td><td>A15.0 (gesichert)</td><td>ja</td><td rowspan='1' class='demis'><b>DEMIS (MYTD)</b><br><small>§ 6 Abs. 1 IfSG: Tuberkulose (NotificationDiseaseMYTD)</small></td></tr>
+<tr><td rowspan='1'>3</td><td rowspan='1'><b>Masern, Verdachtsfall bei Kind</b></td><td>Clara Testpatient</td><td>lebend</td><td>Kinderstation 1</td><td>B05.9 (Verdacht)</td><td>nein</td><td rowspan='1' class='demis'><b>DEMIS (MSVD)</b><br><small>§ 6 Abs. 1 IfSG: Masern, Verdacht (NotificationDiseaseMSVD). Kein Laborbefund vorhanden</small></td></tr>
+<tr><td rowspan='1'>4</td><td rowspan='1'><b>Saisonale Influenza (nachgewiesen)</b></td><td>Dieter Testpatient</td><td>lebend</td><td>Station 3A (Innere)</td><td>J10.1 (gesichert)</td><td>ja</td><td rowspan='1' class='sachsen'><b>Sachsen (Landesmeldung)</b><br><small>SächsIfSMeldeVO § 1 Abs. 1 Nr. 9 (Influenza). In DEMIS nur zoonotische Influenza (IZVD) als Arztmeldung</small></td></tr>
+<tr><td rowspan='3'>5</td><td rowspan='3'><b>Norovirus-Ausbruchsverdacht auf Station 3B (3 Patienten)</b></td><td>Erwin Testpatient</td><td>lebend</td><td>Station 3B (Innere)</td><td>A08.1 (Verdacht)</td><td>nein</td><td rowspan='3' class='offen'><b>kein automatischer Weg</b><br><small>§ 6 Abs. 3 IfSG (Häufung nosokomialer Infektionen, nichtnamentlich). DEMIS kennt den Typ 6.3, aber kein Profil; Norovirus steht nicht in der SächsIfSMeldeVO. Das Landesformular enthält die Zeile &#x27;zwei oder mehr nosokomiale Infektionen&#x27;. Rückfallzweig: manuelle Klärung</small></td></tr>
+<tr><td>Frieda Testpatient</td><td>lebend</td><td>Station 3B (Innere)</td><td>A08.1 (Verdacht)</td><td>nein</td></tr>
+<tr><td>Gustav Testpatient</td><td>lebend</td><td>Station 3B (Innere)</td><td>A08.1 (Verdacht)</td><td>nein</td></tr>
+<tr><td rowspan='1'>6</td><td rowspan='1'><b>Sepsis mit 4MRGN Klebsiella pneumoniae, Patient verstorben</b></td><td>Hans Testpatient</td><td>verstorben</td><td>Station 3A (Innere)</td><td>A41.58 (gesichert)</td><td>ja</td><td rowspan='1' class='sachsen'><b>Sachsen (Landesmeldung)</b><br><small>SächsIfSMeldeVO § 1 Abs. 2: Tod infolge einer sonstigen Infektionskrankheit. Der Erregernachweis selbst ist Laborsache (§ 7 IfSG)</small></td></tr>
+<tr><td rowspan='1'>7</td><td rowspan='1'><b>C. difficile, schwere Verlaufsform, Patientin verstorben</b></td><td>Ingrid Testpatient</td><td>verstorben</td><td>Station 3A (Innere) → Intensivstation 1</td><td>A04.71 (gesichert)</td><td>ja</td><td rowspan='1' class='demis'><b>DEMIS (CDFD)</b><br><small>Wie Fall 1; zusätzlich Todesangabe in DEMIS (Fragebogen isDead = yes, deathDate)</small></td></tr>
+</table></div>
+</body></html>

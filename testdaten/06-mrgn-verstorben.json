@@ -1,0 +1,480 @@
+{
+  "resourceType": "Bundle",
+  "type": "transaction",
+  "entry": [
+    {
+      "resource": {
+        "resourceType": "Patient",
+        "id": "pat-06-mrgn-verstorben-mrgn",
+        "meta": {
+          "tag": [
+            {
+              "system": "https://meldeassistent.test/tags",
+              "code": "SYNTHETISCH",
+              "display": "Synthetischer Testdatensatz"
+            },
+            {
+              "system": "https://meldeassistent.test/testfall",
+              "code": "06-mrgn-verstorben"
+            }
+          ],
+          "profile": [
+            "https://gematik.de/fhir/isik/StructureDefinition/ISiKPatient"
+          ]
+        },
+        "identifier": [
+          {
+            "type": {
+              "coding": [
+                {
+                  "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+                  "code": "MR"
+                }
+              ]
+            },
+            "system": "https://meldeassistent.test/sid/patientennummer",
+            "value": "TEST-06-mrgn"
+          }
+        ],
+        "active": true,
+        "name": [
+          {
+            "use": "official",
+            "family": "Testpatient",
+            "given": [
+              "Hans"
+            ]
+          }
+        ],
+        "telecom": [
+          {
+            "system": "phone",
+            "value": "+49 371 0000008",
+            "use": "home"
+          }
+        ],
+        "gender": "male",
+        "birthDate": "1941-02-21",
+        "address": [
+          {
+            "type": "both",
+            "line": [
+              "Zufallsring 5"
+            ],
+            "_line": [
+              {
+                "extension": [
+                  {
+                    "url": "http://hl7.org/fhir/StructureDefinition/iso21090-ADXP-streetName",
+                    "valueString": "Zufallsring"
+                  },
+                  {
+                    "url": "http://hl7.org/fhir/StructureDefinition/iso21090-ADXP-houseNumber",
+                    "valueString": "5"
+                  }
+                ]
+              }
+            ],
+            "city": "Chemnitz",
+            "postalCode": "09113",
+            "country": "DE"
+          }
+        ],
+        "deceasedDateTime": "2026-10-21T06:40:00+02:00"
+      },
+      "request": {
+        "method": "PUT",
+        "url": "Patient/pat-06-mrgn-verstorben-mrgn"
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "Encounter",
+        "id": "enc-06-mrgn-verstorben-mrgn-einr",
+        "meta": {
+          "tag": [
+            {
+              "system": "https://meldeassistent.test/tags",
+              "code": "SYNTHETISCH",
+              "display": "Synthetischer Testdatensatz"
+            },
+            {
+              "system": "https://meldeassistent.test/testfall",
+              "code": "06-mrgn-verstorben"
+            }
+          ],
+          "profile": [
+            "https://gematik.de/fhir/isik/StructureDefinition/ISiKKontaktGesundheitseinrichtung"
+          ]
+        },
+        "extension": [
+          {
+            "url": "http://fhir.de/StructureDefinition/Aufnahmegrund",
+            "extension": [
+              {
+                "url": "ErsteUndZweiteStelle",
+                "valueCoding": {
+                  "system": "http://fhir.de/CodeSystem/dkgev/AufnahmegrundErsteUndZweiteStelle",
+                  "code": "01",
+                  "display": "Krankenhausbehandlung, vollstationär"
+                }
+              }
+            ]
+          }
+        ],
+        "identifier": [
+          {
+            "type": {
+              "coding": [
+                {
+                  "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+                  "code": "VN"
+                }
+              ]
+            },
+            "system": "https://meldeassistent.test/sid/besuchsnummer",
+            "value": "TEST-06-mrgn"
+          }
+        ],
+        "status": "finished",
+        "class": {
+          "system": "http://terminology.hl7.org/CodeSystem/v3-ActCode",
+          "code": "IMP"
+        },
+        "type": [
+          {
+            "coding": [
+              {
+                "system": "http://fhir.de/CodeSystem/Kontaktebene",
+                "code": "einrichtungskontakt"
+              }
+            ]
+          }
+        ],
+        "subject": {
+          "reference": "Patient/pat-06-mrgn-verstorben-mrgn"
+        },
+        "period": {
+          "start": "2026-10-05T11:20:00+02:00",
+          "end": "2026-10-21T06:40:00+02:00"
+        },
+        "diagnosis": [
+          {
+            "condition": {
+              "reference": "Condition/cond-06-mrgn-verstorben-mrgn"
+            },
+            "use": {
+              "coding": [
+                {
+                  "system": "http://fhir.de/CodeSystem/KontaktDiagnoseProzedur",
+                  "code": "treatment-diagnosis"
+                }
+              ]
+            },
+            "rank": 1
+          }
+        ],
+        "hospitalization": {
+          "dischargeDisposition": {
+            "coding": [
+              {
+                "system": "http://terminology.hl7.org/CodeSystem/discharge-disposition",
+                "code": "exp"
+              }
+            ],
+            "extension": [
+              {
+                "url": "http://fhir.de/StructureDefinition/Entlassungsgrund",
+                "extension": [
+                  {
+                    "url": "ErsteUndZweiteStelle",
+                    "valueCoding": {
+                      "system": "http://fhir.de/CodeSystem/dkgev/EntlassungsgrundErsteUndZweiteStelle",
+                      "code": "07",
+                      "display": "Tod"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      },
+      "request": {
+        "method": "PUT",
+        "url": "Encounter/enc-06-mrgn-verstorben-mrgn-einr"
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "Encounter",
+        "id": "enc-06-mrgn-verstorben-mrgn-abt1",
+        "meta": {
+          "tag": [
+            {
+              "system": "https://meldeassistent.test/tags",
+              "code": "SYNTHETISCH",
+              "display": "Synthetischer Testdatensatz"
+            },
+            {
+              "system": "https://meldeassistent.test/testfall",
+              "code": "06-mrgn-verstorben"
+            }
+          ],
+          "profile": [
+            "https://gematik.de/fhir/isik/StructureDefinition/ISiKKontaktGesundheitseinrichtung"
+          ]
+        },
+        "identifier": [
+          {
+            "type": {
+              "coding": [
+                {
+                  "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+                  "code": "VN"
+                }
+              ]
+            },
+            "system": "https://meldeassistent.test/sid/besuchsnummer",
+            "value": "TEST-06-mrgn-1"
+          }
+        ],
+        "status": "finished",
+        "class": {
+          "system": "http://terminology.hl7.org/CodeSystem/v3-ActCode",
+          "code": "IMP"
+        },
+        "type": [
+          {
+            "coding": [
+              {
+                "system": "http://fhir.de/CodeSystem/Kontaktebene",
+                "code": "abteilungskontakt"
+              }
+            ]
+          }
+        ],
+        "serviceType": {
+          "coding": [
+            {
+              "system": "http://fhir.de/CodeSystem/dkgev/Fachabteilungsschluessel",
+              "code": "0100",
+              "display": "Innere Medizin"
+            }
+          ]
+        },
+        "subject": {
+          "reference": "Patient/pat-06-mrgn-verstorben-mrgn"
+        },
+        "period": {
+          "start": "2026-10-05T11:20:00+02:00",
+          "end": "2026-10-21T06:40:00+02:00"
+        },
+        "location": [
+          {
+            "location": {
+              "reference": "Location/loc-3a",
+              "display": "Station 3A (Innere)"
+            },
+            "status": "completed",
+            "physicalType": {
+              "coding": [
+                {
+                  "system": "http://terminology.hl7.org/CodeSystem/location-physical-type",
+                  "code": "wa"
+                }
+              ]
+            }
+          }
+        ],
+        "partOf": {
+          "reference": "Encounter/enc-06-mrgn-verstorben-mrgn-einr"
+        }
+      },
+      "request": {
+        "method": "PUT",
+        "url": "Encounter/enc-06-mrgn-verstorben-mrgn-abt1"
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "Condition",
+        "id": "cond-06-mrgn-verstorben-mrgn",
+        "meta": {
+          "tag": [
+            {
+              "system": "https://meldeassistent.test/tags",
+              "code": "SYNTHETISCH",
+              "display": "Synthetischer Testdatensatz"
+            },
+            {
+              "system": "https://meldeassistent.test/testfall",
+              "code": "06-mrgn-verstorben"
+            }
+          ],
+          "profile": [
+            "https://gematik.de/fhir/isik/StructureDefinition/ISiKDiagnose"
+          ]
+        },
+        "clinicalStatus": {
+          "coding": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/condition-clinical",
+              "code": "active"
+            }
+          ]
+        },
+        "verificationStatus": {
+          "coding": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/condition-ver-status",
+              "code": "confirmed"
+            }
+          ]
+        },
+        "code": {
+          "coding": [
+            {
+              "system": "http://fhir.de/CodeSystem/bfarm/icd-10-gm",
+              "version": "2026",
+              "code": "A41.58",
+              "extension": [
+                {
+                  "url": "http://fhir.de/StructureDefinition/icd-10-gm-diagnosesicherheit",
+                  "valueCoding": {
+                    "system": "https://fhir.kbv.de/CodeSystem/KBV_CS_SFHIR_ICD_DIAGNOSESICHERHEIT",
+                    "code": "G",
+                    "display": "gesicherte Diagnose"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "subject": {
+          "reference": "Patient/pat-06-mrgn-verstorben-mrgn"
+        },
+        "encounter": {
+          "reference": "Encounter/enc-06-mrgn-verstorben-mrgn-einr"
+        },
+        "onsetDateTime": "2026-10-18",
+        "recordedDate": "2026-10-21",
+        "note": [
+          {
+            "text": "Synthetischer Testfall: Sepsis durch 4MRGN Klebsiella pneumoniae (Blutkultur), Tod am 21.10.2026."
+          }
+        ]
+      },
+      "request": {
+        "method": "PUT",
+        "url": "Condition/cond-06-mrgn-verstorben-mrgn"
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "Observation",
+        "id": "obs-06-mrgn-verstorben-mrgn",
+        "meta": {
+          "tag": [
+            {
+              "system": "https://meldeassistent.test/tags",
+              "code": "SYNTHETISCH",
+              "display": "Synthetischer Testdatensatz"
+            },
+            {
+              "system": "https://meldeassistent.test/testfall",
+              "code": "06-mrgn-verstorben"
+            }
+          ]
+        },
+        "status": "final",
+        "category": [
+          {
+            "coding": [
+              {
+                "system": "http://terminology.hl7.org/CodeSystem/observation-category",
+                "code": "laboratory"
+              }
+            ]
+          }
+        ],
+        "code": {
+          "text": "Blutkultur: Klebsiella pneumoniae, 4MRGN"
+        },
+        "subject": {
+          "reference": "Patient/pat-06-mrgn-verstorben-mrgn"
+        },
+        "encounter": {
+          "reference": "Encounter/enc-06-mrgn-verstorben-mrgn-einr"
+        },
+        "effectiveDateTime": "2026-10-19T15:00:00+02:00",
+        "valueString": "nachgewiesen"
+      },
+      "request": {
+        "method": "PUT",
+        "url": "Observation/obs-06-mrgn-verstorben-mrgn"
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "DiagnosticReport",
+        "id": "lab-06-mrgn-verstorben-mrgn",
+        "meta": {
+          "tag": [
+            {
+              "system": "https://meldeassistent.test/tags",
+              "code": "SYNTHETISCH",
+              "display": "Synthetischer Testdatensatz"
+            },
+            {
+              "system": "https://meldeassistent.test/testfall",
+              "code": "06-mrgn-verstorben"
+            }
+          ]
+        },
+        "identifier": [
+          {
+            "system": "https://meldeassistent.test/sid/labornummer",
+            "value": "L-2026-100006"
+          }
+        ],
+        "status": "final",
+        "category": [
+          {
+            "coding": [
+              {
+                "system": "http://terminology.hl7.org/CodeSystem/v2-0074",
+                "code": "LAB"
+              }
+            ]
+          }
+        ],
+        "code": {
+          "text": "Blutkultur: Klebsiella pneumoniae, 4MRGN"
+        },
+        "subject": {
+          "reference": "Patient/pat-06-mrgn-verstorben-mrgn"
+        },
+        "encounter": {
+          "reference": "Encounter/enc-06-mrgn-verstorben-mrgn-einr"
+        },
+        "effectiveDateTime": "2026-10-19T15:00:00+02:00",
+        "issued": "2026-10-19T15:00:00+02:00",
+        "performer": [
+          {
+            "reference": "Organization/org-labor-test"
+          }
+        ],
+        "result": [
+          {
+            "reference": "Observation/obs-06-mrgn-verstorben-mrgn"
+          }
+        ]
+      },
+      "request": {
+        "method": "PUT",
+        "url": "DiagnosticReport/lab-06-mrgn-verstorben-mrgn"
+      }
+    }
+  ]
+}

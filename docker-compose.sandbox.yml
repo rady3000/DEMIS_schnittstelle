@@ -1,0 +1,8 @@
+# NUR für die Cloud-Entwicklungsumgebung von Claude Code, in der Docker keine Netzwerkbrücke hat.
+# Auf einem normalen Rechner oder der Klinik-VM NICHT verwenden.
+#
+#   docker compose -f docker-compose.yml -f docker-compose.sandbox.yml up -d
+services:
+  schein-kis:
+    network_mode: host
+    ports: !reset []

@@ -1,0 +1,58 @@
+[
+  {
+    "fall": "01-cdi-schwer",
+    "titel": "C. difficile, schwere Verlaufsform, Verlegung auf ITS",
+    "erwarteter_meldeweg": "DEMIS",
+    "erwartetes_demis_profil": "CDFD",
+    "begruendung": "§ 6 Abs. 1 IfSG: C. difficile schwere Verlaufsform (NotificationDiseaseCDFD)",
+    "anzahl_patienten": 1
+  },
+  {
+    "fall": "02-tb-offen",
+    "titel": "Offene Lungentuberkulose (mikroskopisch positiv)",
+    "erwarteter_meldeweg": "DEMIS",
+    "erwartetes_demis_profil": "MYTD",
+    "begruendung": "§ 6 Abs. 1 IfSG: Tuberkulose (NotificationDiseaseMYTD)",
+    "anzahl_patienten": 1
+  },
+  {
+    "fall": "03-masern-verdacht",
+    "titel": "Masern, Verdachtsfall bei Kind",
+    "erwarteter_meldeweg": "DEMIS",
+    "erwartetes_demis_profil": "MSVD",
+    "begruendung": "§ 6 Abs. 1 IfSG: Masern, Verdacht (NotificationDiseaseMSVD). Kein Laborbefund vorhanden",
+    "anzahl_patienten": 1
+  },
+  {
+    "fall": "04-influenza",
+    "titel": "Saisonale Influenza (nachgewiesen)",
+    "erwarteter_meldeweg": "SACHSEN",
+    "erwartetes_demis_profil": null,
+    "begruendung": "SächsIfSMeldeVO § 1 Abs. 1 Nr. 9 (Influenza). In DEMIS nur zoonotische Influenza (IZVD) als Arztmeldung",
+    "anzahl_patienten": 1
+  },
+  {
+    "fall": "05-norovirus-ausbruch",
+    "titel": "Norovirus-Ausbruchsverdacht auf Station 3B (3 Patienten)",
+    "erwarteter_meldeweg": "KEIN_AUTOMATISCHER_WEG",
+    "erwartetes_demis_profil": null,
+    "begruendung": "§ 6 Abs. 3 IfSG (Häufung nosokomialer Infektionen, nichtnamentlich). DEMIS kennt den Typ 6.3, aber kein Profil; Norovirus steht nicht in der SächsIfSMeldeVO. Das Landesformular enthält die Zeile 'zwei oder mehr nosokomiale Infektionen'. Rückfallzweig: manuelle Klärung",
+    "anzahl_patienten": 3
+  },
+  {
+    "fall": "06-mrgn-verstorben",
+    "titel": "Sepsis mit 4MRGN Klebsiella pneumoniae, Patient verstorben",
+    "erwarteter_meldeweg": "SACHSEN",
+    "erwartetes_demis_profil": null,
+    "begruendung": "SächsIfSMeldeVO § 1 Abs. 2: Tod infolge einer sonstigen Infektionskrankheit. Der Erregernachweis selbst ist Laborsache (§ 7 IfSG)",
+    "anzahl_patienten": 1
+  },
+  {
+    "fall": "07-cdi-schwer-verstorben",
+    "titel": "C. difficile, schwere Verlaufsform, Patientin verstorben",
+    "erwarteter_meldeweg": "DEMIS",
+    "erwartetes_demis_profil": "CDFD",
+    "begruendung": "Wie Fall 1; zusätzlich Todesangabe in DEMIS (Fragebogen isDead = yes, deathDate)",
+    "anzahl_patienten": 1
+  }
+]

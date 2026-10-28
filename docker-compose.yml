@@ -1,0 +1,28 @@
+# Schein-KIS für die Entwicklung: ein HAPI-FHIR-Server (FHIR R4), der die ISiK-Schnittstelle
+# des echten KIS (NEXUS) nachahmt. Enthält ausschließlich synthetische Testdaten.
+#
+# Start:    docker compose up -d        (danach ca. 45 Sekunden warten)
+# Testdaten: python -m meldeassistent.testdaten --einspielen
+# Browser:  http://localhost:8080/fhir/Patient?_format=html   (Oberfläche: http://localhost:8080/)
+# Stopp:    docker compose down
+# Hinweis:  Das Schein-KIS speichert nur im Arbeitsspeicher. Nach jedem Start die Testdaten neu
+#           einspielen (dauert wenige Sekunden). Das ist Absicht: reines Testsystem ohne Altlasten.
+#
+# Der Port ist bewusst nur an 127.0.0.1 gebunden: Der Server hat keine Anmeldung und darf
+# nicht aus dem Kliniknetz erreichbar sein.
+services:
+  schein-kis:
+    image: hapiproject/hapi:v8.12.0-2
+    container_name: meldeassistent-schein-kis
+    ports:
+      - "127.0.0.1:8080:8080"
+    environment:
+      # FHIR-Version des Servers (ISiK und DEMIS verwenden R4 = 4.0.1)
+      hapi.fhir.fhir_version: "R4"
+      # Beim Einspielen dürfen Ressourcen mit selbst vergebenen IDs angelegt werden
+      hapi.fhir.client_id_strategy: "ANY"
+      hapi.fhir.allow_external_references: "true"
+      hapi.fhir.allow_placeholder_references: "true"
+    # Kein healthcheck: Das Image hat weder Shell noch curl. Der Server braucht nach dem Start
+    # etwa 45 Sekunden; bereit ist er, wenn http://localhost:8080/fhir/metadata antwortet.
+

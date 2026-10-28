@@ -1,0 +1,1026 @@
+{
+  "resourceType": "Bundle",
+  "type": "transaction",
+  "entry": [
+    {
+      "resource": {
+        "resourceType": "Patient",
+        "id": "pat-05-norovirus-ausbruch-noro1",
+        "meta": {
+          "tag": [
+            {
+              "system": "https://meldeassistent.test/tags",
+              "code": "SYNTHETISCH",
+              "display": "Synthetischer Testdatensatz"
+            },
+            {
+              "system": "https://meldeassistent.test/testfall",
+              "code": "05-norovirus-ausbruch"
+            }
+          ],
+          "profile": [
+            "https://gematik.de/fhir/isik/StructureDefinition/ISiKPatient"
+          ]
+        },
+        "identifier": [
+          {
+            "type": {
+              "coding": [
+                {
+                  "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+                  "code": "MR"
+                }
+              ]
+            },
+            "system": "https://meldeassistent.test/sid/patientennummer",
+            "value": "TEST-05-noro1"
+          }
+        ],
+        "active": true,
+        "name": [
+          {
+            "use": "official",
+            "family": "Testpatient",
+            "given": [
+              "Erwin"
+            ]
+          }
+        ],
+        "telecom": [
+          {
+            "system": "phone",
+            "value": "+49 371 0000005",
+            "use": "home"
+          }
+        ],
+        "gender": "male",
+        "birthDate": "1944-01-19",
+        "address": [
+          {
+            "type": "both",
+            "line": [
+              "Fantasieallee 21"
+            ],
+            "_line": [
+              {
+                "extension": [
+                  {
+                    "url": "http://hl7.org/fhir/StructureDefinition/iso21090-ADXP-streetName",
+                    "valueString": "Fantasieallee"
+                  },
+                  {
+                    "url": "http://hl7.org/fhir/StructureDefinition/iso21090-ADXP-houseNumber",
+                    "valueString": "21"
+                  }
+                ]
+              }
+            ],
+            "city": "Chemnitz",
+            "postalCode": "09119",
+            "country": "DE"
+          }
+        ]
+      },
+      "request": {
+        "method": "PUT",
+        "url": "Patient/pat-05-norovirus-ausbruch-noro1"
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "Encounter",
+        "id": "enc-05-norovirus-ausbruch-noro1-einr",
+        "meta": {
+          "tag": [
+            {
+              "system": "https://meldeassistent.test/tags",
+              "code": "SYNTHETISCH",
+              "display": "Synthetischer Testdatensatz"
+            },
+            {
+              "system": "https://meldeassistent.test/testfall",
+              "code": "05-norovirus-ausbruch"
+            }
+          ],
+          "profile": [
+            "https://gematik.de/fhir/isik/StructureDefinition/ISiKKontaktGesundheitseinrichtung"
+          ]
+        },
+        "extension": [
+          {
+            "url": "http://fhir.de/StructureDefinition/Aufnahmegrund",
+            "extension": [
+              {
+                "url": "ErsteUndZweiteStelle",
+                "valueCoding": {
+                  "system": "http://fhir.de/CodeSystem/dkgev/AufnahmegrundErsteUndZweiteStelle",
+                  "code": "01",
+                  "display": "Krankenhausbehandlung, vollstationär"
+                }
+              }
+            ]
+          }
+        ],
+        "identifier": [
+          {
+            "type": {
+              "coding": [
+                {
+                  "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+                  "code": "VN"
+                }
+              ]
+            },
+            "system": "https://meldeassistent.test/sid/besuchsnummer",
+            "value": "TEST-05-noro1"
+          }
+        ],
+        "status": "in-progress",
+        "class": {
+          "system": "http://terminology.hl7.org/CodeSystem/v3-ActCode",
+          "code": "IMP"
+        },
+        "type": [
+          {
+            "coding": [
+              {
+                "system": "http://fhir.de/CodeSystem/Kontaktebene",
+                "code": "einrichtungskontakt"
+              }
+            ]
+          }
+        ],
+        "subject": {
+          "reference": "Patient/pat-05-norovirus-ausbruch-noro1"
+        },
+        "period": {
+          "start": "2026-10-19T09:00:00+02:00"
+        },
+        "diagnosis": [
+          {
+            "condition": {
+              "reference": "Condition/cond-05-norovirus-ausbruch-noro1"
+            },
+            "use": {
+              "coding": [
+                {
+                  "system": "http://fhir.de/CodeSystem/KontaktDiagnoseProzedur",
+                  "code": "treatment-diagnosis"
+                }
+              ]
+            },
+            "rank": 1
+          }
+        ]
+      },
+      "request": {
+        "method": "PUT",
+        "url": "Encounter/enc-05-norovirus-ausbruch-noro1-einr"
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "Encounter",
+        "id": "enc-05-norovirus-ausbruch-noro1-abt1",
+        "meta": {
+          "tag": [
+            {
+              "system": "https://meldeassistent.test/tags",
+              "code": "SYNTHETISCH",
+              "display": "Synthetischer Testdatensatz"
+            },
+            {
+              "system": "https://meldeassistent.test/testfall",
+              "code": "05-norovirus-ausbruch"
+            }
+          ],
+          "profile": [
+            "https://gematik.de/fhir/isik/StructureDefinition/ISiKKontaktGesundheitseinrichtung"
+          ]
+        },
+        "identifier": [
+          {
+            "type": {
+              "coding": [
+                {
+                  "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+                  "code": "VN"
+                }
+              ]
+            },
+            "system": "https://meldeassistent.test/sid/besuchsnummer",
+            "value": "TEST-05-noro1-1"
+          }
+        ],
+        "status": "in-progress",
+        "class": {
+          "system": "http://terminology.hl7.org/CodeSystem/v3-ActCode",
+          "code": "IMP"
+        },
+        "type": [
+          {
+            "coding": [
+              {
+                "system": "http://fhir.de/CodeSystem/Kontaktebene",
+                "code": "abteilungskontakt"
+              }
+            ]
+          }
+        ],
+        "serviceType": {
+          "coding": [
+            {
+              "system": "http://fhir.de/CodeSystem/dkgev/Fachabteilungsschluessel",
+              "code": "0100",
+              "display": "Innere Medizin"
+            }
+          ]
+        },
+        "subject": {
+          "reference": "Patient/pat-05-norovirus-ausbruch-noro1"
+        },
+        "period": {
+          "start": "2026-10-19T09:00:00+02:00"
+        },
+        "location": [
+          {
+            "location": {
+              "reference": "Location/loc-3b",
+              "display": "Station 3B (Innere)"
+            },
+            "status": "active",
+            "physicalType": {
+              "coding": [
+                {
+                  "system": "http://terminology.hl7.org/CodeSystem/location-physical-type",
+                  "code": "wa"
+                }
+              ]
+            }
+          }
+        ],
+        "partOf": {
+          "reference": "Encounter/enc-05-norovirus-ausbruch-noro1-einr"
+        }
+      },
+      "request": {
+        "method": "PUT",
+        "url": "Encounter/enc-05-norovirus-ausbruch-noro1-abt1"
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "Condition",
+        "id": "cond-05-norovirus-ausbruch-noro1",
+        "meta": {
+          "tag": [
+            {
+              "system": "https://meldeassistent.test/tags",
+              "code": "SYNTHETISCH",
+              "display": "Synthetischer Testdatensatz"
+            },
+            {
+              "system": "https://meldeassistent.test/testfall",
+              "code": "05-norovirus-ausbruch"
+            }
+          ],
+          "profile": [
+            "https://gematik.de/fhir/isik/StructureDefinition/ISiKDiagnose"
+          ]
+        },
+        "clinicalStatus": {
+          "coding": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/condition-clinical",
+              "code": "active"
+            }
+          ]
+        },
+        "verificationStatus": {
+          "coding": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/condition-ver-status",
+              "code": "provisional"
+            }
+          ]
+        },
+        "code": {
+          "coding": [
+            {
+              "system": "http://fhir.de/CodeSystem/bfarm/icd-10-gm",
+              "version": "2026",
+              "code": "A08.1",
+              "extension": [
+                {
+                  "url": "http://fhir.de/StructureDefinition/icd-10-gm-diagnosesicherheit",
+                  "valueCoding": {
+                    "system": "https://fhir.kbv.de/CodeSystem/KBV_CS_SFHIR_ICD_DIAGNOSESICHERHEIT",
+                    "code": "V",
+                    "display": "Verdachtsdiagnose"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "subject": {
+          "reference": "Patient/pat-05-norovirus-ausbruch-noro1"
+        },
+        "encounter": {
+          "reference": "Encounter/enc-05-norovirus-ausbruch-noro1-einr"
+        },
+        "onsetDateTime": "2026-10-26",
+        "recordedDate": "2026-10-27",
+        "note": [
+          {
+            "text": "Synthetischer Testfall: akute Gastroenteritis, Norovirus-Verdacht, stationär erworben."
+          }
+        ]
+      },
+      "request": {
+        "method": "PUT",
+        "url": "Condition/cond-05-norovirus-ausbruch-noro1"
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "Patient",
+        "id": "pat-05-norovirus-ausbruch-noro2",
+        "meta": {
+          "tag": [
+            {
+              "system": "https://meldeassistent.test/tags",
+              "code": "SYNTHETISCH",
+              "display": "Synthetischer Testdatensatz"
+            },
+            {
+              "system": "https://meldeassistent.test/testfall",
+              "code": "05-norovirus-ausbruch"
+            }
+          ],
+          "profile": [
+            "https://gematik.de/fhir/isik/StructureDefinition/ISiKPatient"
+          ]
+        },
+        "identifier": [
+          {
+            "type": {
+              "coding": [
+                {
+                  "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+                  "code": "MR"
+                }
+              ]
+            },
+            "system": "https://meldeassistent.test/sid/patientennummer",
+            "value": "TEST-05-noro2"
+          }
+        ],
+        "active": true,
+        "name": [
+          {
+            "use": "official",
+            "family": "Testpatient",
+            "given": [
+              "Frieda"
+            ]
+          }
+        ],
+        "telecom": [
+          {
+            "system": "phone",
+            "value": "+49 371 0000006",
+            "use": "home"
+          }
+        ],
+        "gender": "female",
+        "birthDate": "1951-06-03",
+        "address": [
+          {
+            "type": "both",
+            "line": [
+              "Fantasieallee 23"
+            ],
+            "_line": [
+              {
+                "extension": [
+                  {
+                    "url": "http://hl7.org/fhir/StructureDefinition/iso21090-ADXP-streetName",
+                    "valueString": "Fantasieallee"
+                  },
+                  {
+                    "url": "http://hl7.org/fhir/StructureDefinition/iso21090-ADXP-houseNumber",
+                    "valueString": "23"
+                  }
+                ]
+              }
+            ],
+            "city": "Chemnitz",
+            "postalCode": "09119",
+            "country": "DE"
+          }
+        ]
+      },
+      "request": {
+        "method": "PUT",
+        "url": "Patient/pat-05-norovirus-ausbruch-noro2"
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "Encounter",
+        "id": "enc-05-norovirus-ausbruch-noro2-einr",
+        "meta": {
+          "tag": [
+            {
+              "system": "https://meldeassistent.test/tags",
+              "code": "SYNTHETISCH",
+              "display": "Synthetischer Testdatensatz"
+            },
+            {
+              "system": "https://meldeassistent.test/testfall",
+              "code": "05-norovirus-ausbruch"
+            }
+          ],
+          "profile": [
+            "https://gematik.de/fhir/isik/StructureDefinition/ISiKKontaktGesundheitseinrichtung"
+          ]
+        },
+        "extension": [
+          {
+            "url": "http://fhir.de/StructureDefinition/Aufnahmegrund",
+            "extension": [
+              {
+                "url": "ErsteUndZweiteStelle",
+                "valueCoding": {
+                  "system": "http://fhir.de/CodeSystem/dkgev/AufnahmegrundErsteUndZweiteStelle",
+                  "code": "01",
+                  "display": "Krankenhausbehandlung, vollstationär"
+                }
+              }
+            ]
+          }
+        ],
+        "identifier": [
+          {
+            "type": {
+              "coding": [
+                {
+                  "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+                  "code": "VN"
+                }
+              ]
+            },
+            "system": "https://meldeassistent.test/sid/besuchsnummer",
+            "value": "TEST-05-noro2"
+          }
+        ],
+        "status": "in-progress",
+        "class": {
+          "system": "http://terminology.hl7.org/CodeSystem/v3-ActCode",
+          "code": "IMP"
+        },
+        "type": [
+          {
+            "coding": [
+              {
+                "system": "http://fhir.de/CodeSystem/Kontaktebene",
+                "code": "einrichtungskontakt"
+              }
+            ]
+          }
+        ],
+        "subject": {
+          "reference": "Patient/pat-05-norovirus-ausbruch-noro2"
+        },
+        "period": {
+          "start": "2026-10-20T09:30:00+02:00"
+        },
+        "diagnosis": [
+          {
+            "condition": {
+              "reference": "Condition/cond-05-norovirus-ausbruch-noro2"
+            },
+            "use": {
+              "coding": [
+                {
+                  "system": "http://fhir.de/CodeSystem/KontaktDiagnoseProzedur",
+                  "code": "treatment-diagnosis"
+                }
+              ]
+            },
+            "rank": 1
+          }
+        ]
+      },
+      "request": {
+        "method": "PUT",
+        "url": "Encounter/enc-05-norovirus-ausbruch-noro2-einr"
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "Encounter",
+        "id": "enc-05-norovirus-ausbruch-noro2-abt1",
+        "meta": {
+          "tag": [
+            {
+              "system": "https://meldeassistent.test/tags",
+              "code": "SYNTHETISCH",
+              "display": "Synthetischer Testdatensatz"
+            },
+            {
+              "system": "https://meldeassistent.test/testfall",
+              "code": "05-norovirus-ausbruch"
+            }
+          ],
+          "profile": [
+            "https://gematik.de/fhir/isik/StructureDefinition/ISiKKontaktGesundheitseinrichtung"
+          ]
+        },
+        "identifier": [
+          {
+            "type": {
+              "coding": [
+                {
+                  "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+                  "code": "VN"
+                }
+              ]
+            },
+            "system": "https://meldeassistent.test/sid/besuchsnummer",
+            "value": "TEST-05-noro2-1"
+          }
+        ],
+        "status": "in-progress",
+        "class": {
+          "system": "http://terminology.hl7.org/CodeSystem/v3-ActCode",
+          "code": "IMP"
+        },
+        "type": [
+          {
+            "coding": [
+              {
+                "system": "http://fhir.de/CodeSystem/Kontaktebene",
+                "code": "abteilungskontakt"
+              }
+            ]
+          }
+        ],
+        "serviceType": {
+          "coding": [
+            {
+              "system": "http://fhir.de/CodeSystem/dkgev/Fachabteilungsschluessel",
+              "code": "0100",
+              "display": "Innere Medizin"
+            }
+          ]
+        },
+        "subject": {
+          "reference": "Patient/pat-05-norovirus-ausbruch-noro2"
+        },
+        "period": {
+          "start": "2026-10-20T09:30:00+02:00"
+        },
+        "location": [
+          {
+            "location": {
+              "reference": "Location/loc-3b",
+              "display": "Station 3B (Innere)"
+            },
+            "status": "active",
+            "physicalType": {
+              "coding": [
+                {
+                  "system": "http://terminology.hl7.org/CodeSystem/location-physical-type",
+                  "code": "wa"
+                }
+              ]
+            }
+          }
+        ],
+        "partOf": {
+          "reference": "Encounter/enc-05-norovirus-ausbruch-noro2-einr"
+        }
+      },
+      "request": {
+        "method": "PUT",
+        "url": "Encounter/enc-05-norovirus-ausbruch-noro2-abt1"
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "Condition",
+        "id": "cond-05-norovirus-ausbruch-noro2",
+        "meta": {
+          "tag": [
+            {
+              "system": "https://meldeassistent.test/tags",
+              "code": "SYNTHETISCH",
+              "display": "Synthetischer Testdatensatz"
+            },
+            {
+              "system": "https://meldeassistent.test/testfall",
+              "code": "05-norovirus-ausbruch"
+            }
+          ],
+          "profile": [
+            "https://gematik.de/fhir/isik/StructureDefinition/ISiKDiagnose"
+          ]
+        },
+        "clinicalStatus": {
+          "coding": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/condition-clinical",
+              "code": "active"
+            }
+          ]
+        },
+        "verificationStatus": {
+          "coding": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/condition-ver-status",
+              "code": "provisional"
+            }
+          ]
+        },
+        "code": {
+          "coding": [
+            {
+              "system": "http://fhir.de/CodeSystem/bfarm/icd-10-gm",
+              "version": "2026",
+              "code": "A08.1",
+              "extension": [
+                {
+                  "url": "http://fhir.de/StructureDefinition/icd-10-gm-diagnosesicherheit",
+                  "valueCoding": {
+                    "system": "https://fhir.kbv.de/CodeSystem/KBV_CS_SFHIR_ICD_DIAGNOSESICHERHEIT",
+                    "code": "V",
+                    "display": "Verdachtsdiagnose"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "subject": {
+          "reference": "Patient/pat-05-norovirus-ausbruch-noro2"
+        },
+        "encounter": {
+          "reference": "Encounter/enc-05-norovirus-ausbruch-noro2-einr"
+        },
+        "onsetDateTime": "2026-10-26",
+        "recordedDate": "2026-10-27",
+        "note": [
+          {
+            "text": "Synthetischer Testfall: akute Gastroenteritis, Norovirus-Verdacht, stationär erworben."
+          }
+        ]
+      },
+      "request": {
+        "method": "PUT",
+        "url": "Condition/cond-05-norovirus-ausbruch-noro2"
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "Patient",
+        "id": "pat-05-norovirus-ausbruch-noro3",
+        "meta": {
+          "tag": [
+            {
+              "system": "https://meldeassistent.test/tags",
+              "code": "SYNTHETISCH",
+              "display": "Synthetischer Testdatensatz"
+            },
+            {
+              "system": "https://meldeassistent.test/testfall",
+              "code": "05-norovirus-ausbruch"
+            }
+          ],
+          "profile": [
+            "https://gematik.de/fhir/isik/StructureDefinition/ISiKPatient"
+          ]
+        },
+        "identifier": [
+          {
+            "type": {
+              "coding": [
+                {
+                  "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+                  "code": "MR"
+                }
+              ]
+            },
+            "system": "https://meldeassistent.test/sid/patientennummer",
+            "value": "TEST-05-noro3"
+          }
+        ],
+        "active": true,
+        "name": [
+          {
+            "use": "official",
+            "family": "Testpatient",
+            "given": [
+              "Gustav"
+            ]
+          }
+        ],
+        "telecom": [
+          {
+            "system": "phone",
+            "value": "+49 371 0000007",
+            "use": "home"
+          }
+        ],
+        "gender": "male",
+        "birthDate": "1960-12-12",
+        "address": [
+          {
+            "type": "both",
+            "line": [
+              "Fantasieallee 25"
+            ],
+            "_line": [
+              {
+                "extension": [
+                  {
+                    "url": "http://hl7.org/fhir/StructureDefinition/iso21090-ADXP-streetName",
+                    "valueString": "Fantasieallee"
+                  },
+                  {
+                    "url": "http://hl7.org/fhir/StructureDefinition/iso21090-ADXP-houseNumber",
+                    "valueString": "25"
+                  }
+                ]
+              }
+            ],
+            "city": "Chemnitz",
+            "postalCode": "09119",
+            "country": "DE"
+          }
+        ]
+      },
+      "request": {
+        "method": "PUT",
+        "url": "Patient/pat-05-norovirus-ausbruch-noro3"
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "Encounter",
+        "id": "enc-05-norovirus-ausbruch-noro3-einr",
+        "meta": {
+          "tag": [
+            {
+              "system": "https://meldeassistent.test/tags",
+              "code": "SYNTHETISCH",
+              "display": "Synthetischer Testdatensatz"
+            },
+            {
+              "system": "https://meldeassistent.test/testfall",
+              "code": "05-norovirus-ausbruch"
+            }
+          ],
+          "profile": [
+            "https://gematik.de/fhir/isik/StructureDefinition/ISiKKontaktGesundheitseinrichtung"
+          ]
+        },
+        "extension": [
+          {
+            "url": "http://fhir.de/StructureDefinition/Aufnahmegrund",
+            "extension": [
+              {
+                "url": "ErsteUndZweiteStelle",
+                "valueCoding": {
+                  "system": "http://fhir.de/CodeSystem/dkgev/AufnahmegrundErsteUndZweiteStelle",
+                  "code": "01",
+                  "display": "Krankenhausbehandlung, vollstationär"
+                }
+              }
+            ]
+          }
+        ],
+        "identifier": [
+          {
+            "type": {
+              "coding": [
+                {
+                  "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+                  "code": "VN"
+                }
+              ]
+            },
+            "system": "https://meldeassistent.test/sid/besuchsnummer",
+            "value": "TEST-05-noro3"
+          }
+        ],
+        "status": "in-progress",
+        "class": {
+          "system": "http://terminology.hl7.org/CodeSystem/v3-ActCode",
+          "code": "IMP"
+        },
+        "type": [
+          {
+            "coding": [
+              {
+                "system": "http://fhir.de/CodeSystem/Kontaktebene",
+                "code": "einrichtungskontakt"
+              }
+            ]
+          }
+        ],
+        "subject": {
+          "reference": "Patient/pat-05-norovirus-ausbruch-noro3"
+        },
+        "period": {
+          "start": "2026-10-21T14:15:00+02:00"
+        },
+        "diagnosis": [
+          {
+            "condition": {
+              "reference": "Condition/cond-05-norovirus-ausbruch-noro3"
+            },
+            "use": {
+              "coding": [
+                {
+                  "system": "http://fhir.de/CodeSystem/KontaktDiagnoseProzedur",
+                  "code": "treatment-diagnosis"
+                }
+              ]
+            },
+            "rank": 1
+          }
+        ]
+      },
+      "request": {
+        "method": "PUT",
+        "url": "Encounter/enc-05-norovirus-ausbruch-noro3-einr"
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "Encounter",
+        "id": "enc-05-norovirus-ausbruch-noro3-abt1",
+        "meta": {
+          "tag": [
+            {
+              "system": "https://meldeassistent.test/tags",
+              "code": "SYNTHETISCH",
+              "display": "Synthetischer Testdatensatz"
+            },
+            {
+              "system": "https://meldeassistent.test/testfall",
+              "code": "05-norovirus-ausbruch"
+            }
+          ],
+          "profile": [
+            "https://gematik.de/fhir/isik/StructureDefinition/ISiKKontaktGesundheitseinrichtung"
+          ]
+        },
+        "identifier": [
+          {
+            "type": {
+              "coding": [
+                {
+                  "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+                  "code": "VN"
+                }
+              ]
+            },
+            "system": "https://meldeassistent.test/sid/besuchsnummer",
+            "value": "TEST-05-noro3-1"
+          }
+        ],
+        "status": "in-progress",
+        "class": {
+          "system": "http://terminology.hl7.org/CodeSystem/v3-ActCode",
+          "code": "IMP"
+        },
+        "type": [
+          {
+            "coding": [
+              {
+                "system": "http://fhir.de/CodeSystem/Kontaktebene",
+                "code": "abteilungskontakt"
+              }
+            ]
+          }
+        ],
+        "serviceType": {
+          "coding": [
+            {
+              "system": "http://fhir.de/CodeSystem/dkgev/Fachabteilungsschluessel",
+              "code": "0100",
+              "display": "Innere Medizin"
+            }
+          ]
+        },
+        "subject": {
+          "reference": "Patient/pat-05-norovirus-ausbruch-noro3"
+        },
+        "period": {
+          "start": "2026-10-21T14:15:00+02:00"
+        },
+        "location": [
+          {
+            "location": {
+              "reference": "Location/loc-3b",
+              "display": "Station 3B (Innere)"
+            },
+            "status": "active",
+            "physicalType": {
+              "coding": [
+                {
+                  "system": "http://terminology.hl7.org/CodeSystem/location-physical-type",
+                  "code": "wa"
+                }
+              ]
+            }
+          }
+        ],
+        "partOf": {
+          "reference": "Encounter/enc-05-norovirus-ausbruch-noro3-einr"
+        }
+      },
+      "request": {
+        "method": "PUT",
+        "url": "Encounter/enc-05-norovirus-ausbruch-noro3-abt1"
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "Condition",
+        "id": "cond-05-norovirus-ausbruch-noro3",
+        "meta": {
+          "tag": [
+            {
+              "system": "https://meldeassistent.test/tags",
+              "code": "SYNTHETISCH",
+              "display": "Synthetischer Testdatensatz"
+            },
+            {
+              "system": "https://meldeassistent.test/testfall",
+              "code": "05-norovirus-ausbruch"
+            }
+          ],
+          "profile": [
+            "https://gematik.de/fhir/isik/StructureDefinition/ISiKDiagnose"
+          ]
+        },
+        "clinicalStatus": {
+          "coding": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/condition-clinical",
+              "code": "active"
+            }
+          ]
+        },
+        "verificationStatus": {
+          "coding": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/condition-ver-status",
+              "code": "provisional"
+            }
+          ]
+        },
+        "code": {
+          "coding": [
+            {
+              "system": "http://fhir.de/CodeSystem/bfarm/icd-10-gm",
+              "version": "2026",
+              "code": "A08.1",
+              "extension": [
+                {
+                  "url": "http://fhir.de/StructureDefinition/icd-10-gm-diagnosesicherheit",
+                  "valueCoding": {
+                    "system": "https://fhir.kbv.de/CodeSystem/KBV_CS_SFHIR_ICD_DIAGNOSESICHERHEIT",
+                    "code": "V",
+                    "display": "Verdachtsdiagnose"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "subject": {
+          "reference": "Patient/pat-05-norovirus-ausbruch-noro3"
+        },
+        "encounter": {
+          "reference": "Encounter/enc-05-norovirus-ausbruch-noro3-einr"
+        },
+        "onsetDateTime": "2026-10-27",
+        "recordedDate": "2026-10-27",
+        "note": [
+          {
+            "text": "Synthetischer Testfall: akute Gastroenteritis, Norovirus-Verdacht, stationär erworben."
+          }
+        ]
+      },
+      "request": {
+        "method": "PUT",
+        "url": "Condition/cond-05-norovirus-ausbruch-noro3"
+      }
+    }
+  ]
+}
