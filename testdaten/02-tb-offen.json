@@ -310,6 +310,7 @@
               "system": "http://fhir.de/CodeSystem/bfarm/icd-10-gm",
               "version": "2026",
               "code": "A15.0",
+              "display": "Lungentuberkulose, durch mikroskopische Untersuchung des Sputums gesichert, mit oder ohne Nachweis durch Kultur oder molekularbiologische Verfahren",
               "extension": [
                 {
                   "url": "http://fhir.de/StructureDefinition/icd-10-gm-diagnosesicherheit",

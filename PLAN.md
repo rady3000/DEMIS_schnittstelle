@@ -166,7 +166,7 @@ demis-meldeassistent/
   „Nutzung der FHIR-Schnittstelle als Sender“, „Anbindungsoptionen für Krankenhäuser“, „Testmöglichkeiten“
 - Sachsen: SächsIfSMeldeVO vom 19.07.2024, Stand 28.10.2026, `https://revosax.sachsen.de/vorschrift_gesamt/20989/47393.html`
 - Landesformular „Arzt-Meldeformular“ (Stand 08/2024): vom Auftraggeber bereitgestellt, abgelegt in `vorlagen/LUA-HM-Arzt-Meldebogen.pdf`
-- **Nicht lesbar (gesperrt):** ISiK-Spezifikationsseite `gemspec.gematik.de`; Terminologieserver `tx.fhir.org` und BfArM (`www.bfarm.de`, ICD-10-GM-Kataloge)
+- **Nicht lesbar (gesperrt):** ISiK-Spezifikationsseite `gemspec.gematik.de`. `tx.fhir.org` und `www.bfarm.de` sind inzwischen freigegeben
 
 ## 10. Phasenplan
 Phase 0 Recherche/Plan → 1 Schein-KIS → 2 KIS-Adapter → 3 Mapping+Validator → 4 Oberfläche →

@@ -6,8 +6,8 @@ Stand: 28.10.2026 · Erledigt = ☑, offen = ☐.
 - ☑ Freigegeben und genutzt: GitHub-Clone (RKI), `packages2.fhir.org`, `wiki.gematik.de`, `simplifier.net`, PyPI, Docker Hub.
 - ☑ Sachsen freigegeben: Verordnungstext SächsIfSMeldeVO (Stand 28.10.2026) gelesen.
 - ☑ Landesformular (Stand 08/2024) wurde bereitgestellt: `vorlagen/LUA-HM-Arzt-Meldebogen.pdf`.
-- ☐ **Noch gesperrt, für Phase 3 nötig:** `tx.fhir.org` (Terminologieserver für den FHIR-Validator: SNOMED-Antworten und ICD-10-GM) und `www.bfarm.de`
-  (offizielle ICD-10-GM-Codeliste). Ohne beides kann der Validator Codes nicht vollständig prüfen. Alternative: Terminologie-Pakete lokal (Lizenzfragen, siehe unten).
+- ☑ `tx.fhir.org` und `www.bfarm.de` freigegeben (erreichbar). **Aber:** `tx.fhir.org` führt ICD-10-GM nicht (Lizenz). Für DEMIS unkritisch (DEMIS-Meldung enthält keine ICD-Codes);
+  ob SNOMED-Antworten (z. B. im CDFD-Fragebogen) dort geprüft werden können, wird in Phase 3 getestet.
 - ☐ **Docker Hub:** In der Entwicklungssitzung liefert Docker Hub dauerhaft HTTP 429 (Abruflimit). Das HAPI-Image kam über den Spiegel `mirror.gcr.io`.
   Für die Klinik-VM ist das unkritisch (eigene IP), sollte aber beim Betrieb bedacht werden (ggf. Klinik-eigene Registry).
 - ☐ **Noch gesperrt, nützlich für Phase 2:** `gemspec.gematik.de` (ISiK-Spezifikationstext; die Profile selbst sind über den Paketserver lesbar).
@@ -56,8 +56,7 @@ Stand: 28.10.2026 · Erledigt = ☑, offen = ☐.
 - ☐ **Herpes zoster, Influenza u. a.:** Werden Sachsen-Fälle mit DEMIS-Kategorie `vzzd` angenommen (DEMIS flaggt `vzzd` nur für `DE-ST`)?
 - ☐ **Frist** der Landesmeldung (Verordnung nennt keine; § 6 IfSG gilt als Rahmen): bestätigen.
 - ☐ Gewünschtes Format/Weg der Landesmeldung (KIM-Adresse? Fax? Portal?).
-- ☐ **ICD-10-GM-Codes der Testdaten:** konnten nicht gegen den BfArM-Katalog geprüft werden (z. B. ob C. difficile schwer `A04.71` oder `A04.72` heißt). Bitte durch die Hygiene/Kodierung gegenlesen:
-  A04.71, A15.0, B05.9, J10.1, A08.1, A41.58 (siehe `src/meldeassistent/testdaten/faelle.py`).
+- ☑ **ICD-10-GM-Codes der Testdaten** wurden vom Auftraggeber am 28.10.2026 bestätigt (A04.71, A15.0, B05.9, J10.1, A08.1, A41.58) und mit Anzeigetext in `faelle.py` eingetragen.
 - ☐ Bleibt das Papierformular für die Landesmeldung verbindlich? Darf ein PDF + Datensatz an seine Stelle treten?
 - ☐ Wer pflegt das YAML-Regelwerk fachlich (Hygiene)?
 

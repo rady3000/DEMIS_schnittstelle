@@ -310,6 +310,7 @@
               "system": "http://fhir.de/CodeSystem/bfarm/icd-10-gm",
               "version": "2026",
               "code": "J10.1",
+              "display": "Grippe mit sonstigen Manifestationen an den Atemwegen, saisonale Influenzaviren nachgewiesen",
               "extension": [
                 {
                   "url": "http://fhir.de/StructureDefinition/icd-10-gm-diagnosesicherheit",

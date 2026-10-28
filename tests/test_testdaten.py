@@ -140,11 +140,22 @@ def test_norovirus_ausbruch_hat_drei_patienten_auf_derselben_station():
     assert len([r for r in ressourcen if r["resourceType"] == "Patient"]) == 3
 
 
-def test_icd_codes_ohne_anzeigetext():
-    # Anzeigetexte wurden bewusst weggelassen (BfArM-Katalog nicht prüfbar)
-    for r in alle_ressourcen():
-        if r["resourceType"] == "Condition":
-            assert "display" not in r["code"]["coding"][0]
+def test_icd_codes_haben_den_bestaetigten_anzeigetext():
+    # Codes und Texte wurden vom Auftraggeber bestätigt (28.10.2026); hier als Festschreibung
+    erwartet = {
+        "A04.71": "Enterokolitis durch Clostridium difficile ohne Megakolon, mit sonstigen Organkomplikationen",
+        "A15.0": "Lungentuberkulose, durch mikroskopische Untersuchung des Sputums gesichert, mit oder ohne Nachweis durch Kultur oder molekularbiologische Verfahren",
+        "B05.9": "Masern ohne Komplikation",
+        "J10.1": "Grippe mit sonstigen Manifestationen an den Atemwegen, saisonale Influenzaviren nachgewiesen",
+        "A08.1": "Akute Gastroenteritis durch Norovirus",
+        "A41.58": "Sepsis durch sonstige gramnegative Erreger",
+    }
+    gefunden = {
+        r["code"]["coding"][0]["code"]: r["code"]["coding"][0]["display"]
+        for r in alle_ressourcen()
+        if r["resourceType"] == "Condition"
+    }
+    assert gefunden == erwartet
 
 
 def test_transaktions_bundle_nutzt_put_mit_fester_id():

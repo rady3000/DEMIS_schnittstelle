@@ -2,6 +2,13 @@
 
 ## [Unveröffentlicht]
 
+### Nachträge nach Phase 2 (28.10.2026)
+- Repository auf GitHub (`rady3000/DEMIS_schnittstelle`), Stand der Phasen 0–2 hochgeladen.
+- Behoben: `pydantic` fehlte in `pyproject.toml` (in frischer Umgebung aufgefallen).
+- ICD-10-GM-Codes der Testfälle vom Auftraggeber bestätigt; Anzeigetexte in den Testdaten ergänzt, Test festgeschrieben.
+- Öffentliches DEMIS-Test-Passwort aus `OFFENE_FRAGEN.md` entfernt (gehört nicht in ein Repository).
+- `tx.fhir.org` und `www.bfarm.de` freigegeben; `tx.fhir.org` kennt ICD-10-GM nicht.
+
 ### Phase 2 – KIS-Adapter (abgeschlossen, 28.10.2026)
 - Internes Datenmodell `meldeassistent.modell` (pydantic, unveränderlich): Patient, Aufenthalt mit Abschnitten, Diagnose, Laborbefund, KisFall, FallUebersicht.
   Grundsatz: Was das KIS nicht liefert, bleibt leer bzw. „unbekannt“ (z. B. fehlende Todesangabe ist nicht „nein“).

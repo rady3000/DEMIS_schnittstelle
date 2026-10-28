@@ -310,6 +310,7 @@
               "system": "http://fhir.de/CodeSystem/bfarm/icd-10-gm",
               "version": "2026",
               "code": "B05.9",
+              "display": "Masern ohne Komplikation",
               "extension": [
                 {
                   "url": "http://fhir.de/StructureDefinition/icd-10-gm-diagnosesicherheit",

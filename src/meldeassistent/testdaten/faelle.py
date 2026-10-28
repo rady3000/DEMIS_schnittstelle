@@ -8,9 +8,9 @@ Die Ressourcen folgen dem ISiK-Basismodul (Patient, Kontakt, Diagnose, Organisat
 Laborbefunde sind bewusst ein *vereinfachtes* Format (DiagnosticReport + Observation), weil noch
 offen ist, ob und wie NEXUS Laborbefunde per FHIR liefert (siehe OFFENE_FRAGEN.md).
 
-Die ICD-10-GM-Codes konnten nicht gegen den BfArM-Katalog geprüft werden (Server gesperrt).
-Sie tragen deshalb keinen Anzeigetext; das Regelwerk soll später nach Code-Präfix (z. B. "A04.7")
-zuordnen, nicht nach exaktem Code.
+Die ICD-10-GM-Codes samt Texten wurden am 28.10.2026 vom Auftraggeber (Chefarzt) bestätigt
+(siehe ICD_TEXTE). Das Regelwerk soll trotzdem nach Code-Präfix (z. B. "A04.7") zuordnen, nicht nach
+dem exakten Code, weil das KIS je nach ICD-Version feinere oder andere Unterschlüssel liefern kann.
 """
 
 from __future__ import annotations
@@ -35,6 +35,16 @@ FACHABTEILUNG = "http://fhir.de/CodeSystem/dkgev/Fachabteilungsschluessel"
 KONTAKTEBENE = "http://fhir.de/CodeSystem/Kontaktebene"
 DIAGNOSESICHERHEIT_EXT = "http://fhir.de/StructureDefinition/icd-10-gm-diagnosesicherheit"
 DIAGNOSESICHERHEIT_CS = "https://fhir.kbv.de/CodeSystem/KBV_CS_SFHIR_ICD_DIAGNOSESICHERHEIT"
+
+# ICD-10-GM-Texte der in den Testfällen verwendeten Codes (vom Auftraggeber bestätigt)
+ICD_TEXTE = {
+    "A04.71": "Enterokolitis durch Clostridium difficile ohne Megakolon, mit sonstigen Organkomplikationen",
+    "A15.0": "Lungentuberkulose, durch mikroskopische Untersuchung des Sputums gesichert, mit oder ohne Nachweis durch Kultur oder molekularbiologische Verfahren",
+    "B05.9": "Masern ohne Komplikation",
+    "J10.1": "Grippe mit sonstigen Manifestationen an den Atemwegen, saisonale Influenzaviren nachgewiesen",
+    "A08.1": "Akute Gastroenteritis durch Norovirus",
+    "A41.58": "Sepsis durch sonstige gramnegative Erreger",
+}
 
 # Meldewege, wie sie das Regelwerk später als Erwartung prüfen soll (siehe PLAN.md, Abschnitt 3)
 WEG_DEMIS = "DEMIS"
@@ -362,6 +372,7 @@ def _condition(fall: str, p: Person, d: Diagnose, diagnose_id: str) -> dict:
                     "system": ICD10GM,
                     "version": "2026",
                     "code": d.icd,
+                    "display": ICD_TEXTE[d.icd],
                     "extension": [
                         {
                             "url": DIAGNOSESICHERHEIT_EXT,

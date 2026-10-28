@@ -401,6 +401,7 @@
               "system": "http://fhir.de/CodeSystem/bfarm/icd-10-gm",
               "version": "2026",
               "code": "A04.71",
+              "display": "Enterokolitis durch Clostridium difficile ohne Megakolon, mit sonstigen Organkomplikationen",
               "extension": [
                 {
                   "url": "http://fhir.de/StructureDefinition/icd-10-gm-diagnosesicherheit",
