@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block titel %}Anmelden – DEMIS-Meldeassistent{% endblock %}
+{% block inhalt %}
+<section class="karte schmal">
+  <h1>Anmelden</h1>
+  {% if fehler %}<p class="meldung fehler" role="alert">{{ fehler }}</p>{% endif %}
+  <form method="post" action="/anmelden">
+    <input type="hidden" name="csrf" value="{{ csrf }}">
+    <label for="benutzer">Benutzername</label>
+    <input id="benutzer" name="benutzer" autocomplete="username" required autofocus>
+    <label for="passwort">Passwort</label>
+    <input id="passwort" name="passwort" type="password" autocomplete="current-password" required>
+    <button type="submit" class="knopf">Anmelden</button>
+  </form>
+  {% if testbetrieb %}<p class="hinweis">Testbetrieb: einfache Test-Anmeldung. Im Echtbetrieb meldet das Klinik-Verzeichnis (LDAP/Active Directory) an.</p>{% endif %}
+</section>
+{% endblock %}

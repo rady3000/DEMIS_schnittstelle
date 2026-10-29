@@ -13,14 +13,9 @@ from __future__ import annotations
 
 from meldeassistent.modell import Diagnose, Diagnosesicherheit, KisFall, Verstorben
 
-from .angaben import Meldeangaben, MelderKonfig
+from meldeassistent.regelwerk import ICD_PRAEFIXE
 
-# Vorläufig (Phase 6 ersetzt das durch das YAML-Regelwerk): ICD-10-GM-Präfixe je DEMIS-Kürzel
-ICD_PRAEFIXE = {
-    "CDFD": ("A04.7",),
-    "MYTD": ("A15", "A16", "A17", "A18", "A19"),
-    "MSVD": ("B05",),
-}
+from .angaben import Meldeangaben, MelderKonfig
 
 ITS_SCHWERER_VERLAUF_CDFD = "186431008:{288556008=305351004}"  # Aufnahme auf eine Intensivstation aufgrund der Erkrankung
 

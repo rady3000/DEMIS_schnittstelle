@@ -1,0 +1,8 @@
+{% extends "base.html" %}
+{% block titel %}Meldebogen – DEMIS-Meldeassistent{% endblock %}
+{% block inhalt %}
+<p><a href="/">← Zur Arbeitsliste</a></p>
+<h1>Meldebogen: {{ fall.patient.anzeigename }}</h1>
+<p class="untertitel">{{ ref.bewertung.grund }}</p>
+{% include "_bogen.html" %}
+{% endblock %}

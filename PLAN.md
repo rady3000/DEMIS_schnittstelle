@@ -168,6 +168,22 @@ Jede Meldung wird vor dem Versand zweifach geprüft; beide Ergebnisse erscheinen
 
 Das Ergebnis trennt `fehler` (DEMIS würde ablehnen), `offen` (noch nicht beantwortet) und `hinweis`.
 
+### Oberfläche (Stand Phase 4)
+
+Serverseitig gerendert (FastAPI + Jinja2 + HTMX, HTMX lokal ausgeliefert, keine externen Ressourcen). Ablauf:
+
+1. **Anmeldung** (Testbetrieb: einfache Test-Anmeldung; Echtbetrieb: LDAP/AD in Phase 7), serverseitige Sitzung, Sperre nach 5 Fehlversuchen, Zeitüberschreitung.
+2. **Arbeitsliste** der meldepflichtigen Befunde mit Meldeweg je Fall (DEMIS / Landesmeldung Sachsen / Klärung nötig), nach vorläufigem Regelwerk (`regelwerk.py`, Phase 6: YAML).
+3. **Meldebogen** (nur für DEMIS-Fälle): KIS-Daten oben, darunter die Fragen des offiziellen DEMIS-Fragebogens. Farbliche **und** textliche Kennzeichnung je Angabe
+   (*aus KIS* / *Vorschlag – bitte bestätigen* / *von Ihnen* / *offen*). Folgefragen erscheinen und verschwinden nach den Bedingungen des Fragebogens (HTMX, ohne Seitenwechsel).
+   Rechts der **Stand**: was noch offen ist (mit Sprungmarken), erst bei „alles beantwortet“ geht es zur Vorschau.
+4. **Vorschau**: Zeigt, was tatsächlich gesendet wird (aus dem fertigen Bundle gebaut). Hier läuft die volle Prüfung mit dem Validator.
+5. **Freigabe**: In Phase 4 **ohne Versand** (Audit-Eintrag `freigegeben_ohne_versand`). Der Versand folgt in Phase 5 nach Rückfrage und mit Testzertifikat.
+
+Datenschutz in der Oberfläche: Entwürfe nur im Arbeitsspeicher (nach Freigabe, Verwerfen oder Zeitablauf gelöscht); Fälle in Adressen nur über zufällige Kennungen (nie KIS-IDs);
+Serverprotokoll enthält nur Adressmuster, keine Kennungen oder Inhalte; Audit-Log nur Vorgangs-ID, Zeit, Benutzer, Meldeweg, Status, Dauer; `Cache-Control: no-store`,
+strikte Content-Security-Policy, CSRF-Schutz, Cookie `HttpOnly` und `SameSite=Strict`.
+
 ## 9. Quellen (am 28.10.2026 gelesen)
 - RKI-Vorabveröffentlichung: `https://robert-koch-institut.github.io/DEMIS_FHIR-Profile_Vorabveroeffentlichung/` (Repository per `git clone` gelesen, Stand 20.04.2026)
 - FHIR-Pakete: `https://packages2.fhir.org/packages/rki.demis.disease` und `…/rki.demis.common` (Version 3.0.0)

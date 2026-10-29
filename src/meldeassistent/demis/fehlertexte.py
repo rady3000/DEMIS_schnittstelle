@@ -105,6 +105,7 @@ class Problem:
     quelle: str = "validator"  # validator | fragebogen | mapper
     technisch: str | None = None  # Originalmeldung, nur für die IT
     folgefehler: bool = False  # True: nur die Folge eines anderen Fehlers
+    link_id: str | None = None  # bei Fragebogen-Befunden: die betroffene Frage
 
     def __str__(self) -> str:
         return f"{self.wo}: {self.text}"

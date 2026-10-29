@@ -1,0 +1,66 @@
+{# Eine Frage des Meldebogens. Aufruf: {% import "_frage.html" as q with context %}{{ q.frage(f, 'a') }} #}
+{% macro marke(quelle, status) -%}
+  {%- if status == 'fehler' -%}<span class="marke marke-fehler">Fehler</span>
+  {%- elif quelle == 'kis' -%}<span class="marke marke-kis">aus KIS</span>
+  {%- elif quelle == 'auto' -%}<span class="marke marke-auto">Vorschlag – bitte bestätigen</span>
+  {%- elif quelle == 'arzt' -%}<span class="marke marke-arzt">von Ihnen</span>
+  {%- elif status == 'offen' -%}<span class="marke marke-offen">offen</span>
+  {%- endif -%}
+{%- endmacro %}
+
+{% macro frage(f, praefix) %}
+{% set key = praefix ~ '.' ~ f.link_id %}
+{% set hk = ('allgemein' if praefix == 'a' else 'spezifisch') ~ '.' ~ f.link_id %}
+{% set quelle = herkunft.get(hk) %}
+{% set status = feld_status.get('feld-' ~ key) %}
+{% if f.typ == 'group' %}
+  {% if f.link_id not in AUTOMATISCH %}<h3 class="gruppentitel tiefe-{{ f.tiefe }}">{{ f.text }}</h3>{% endif %}
+{% elif f.link_id not in AUTOMATISCH and f.typ != 'reference' %}
+  {% set optionen = f.optionen | rejectattr('code', 'equalto', 'NASK') | list %}
+  <div id="feld-{{ key }}" class="frage tiefe-{{ f.tiefe }} quelle-{{ quelle or 'leer' }}{% if status %} ist-{{ status }}{% endif %}">
+  <input type="hidden" name="_f" value="{{ key }}">
+  {% if f.typ == 'choice' and (ist_ja_nein(f.optionen) or optionen|length <= 6) %}
+    <fieldset>
+      <legend>{{ f.text }}{% if f.pflicht %} <span class="stern" title="Pflichtangabe">*</span>{% endif %} {{ marke(quelle, status) }}</legend>
+      <div class="optionen">
+      {% for k in (optionen | sort(attribute='code', reverse=True) if ist_ja_nein(f.optionen) else optionen) %}
+        {% set gesperrt = (f.link_id in NICHT_UNTERSTUETZT_JA and k.code == 'yes') %}
+        <label class="radio{% if gesperrt %} gesperrt{% endif %}">
+          <input type="radio" name="{{ key }}" value="{{ k.code }}"{% if f.wert == k.code %} checked{% endif %}{% if gesperrt %} disabled{% endif %}>
+          {{ 'Ja' if k.code == 'yes' else ('Nein' if k.code == 'no' else option_text(k)) }}
+        </label>
+      {% endfor %}
+      </div>
+      {% if f.link_id in NICHT_UNTERSTUETZT_JA %}<p class="klein">„Ja“ ist in dieser Programmversion noch nicht möglich; bitte in diesem Fall mit der Hygiene abstimmen.</p>{% endif %}
+    </fieldset>
+  {% elif f.typ == 'choice' %}
+    <label for="in-{{ key }}">{{ f.text }}{% if f.pflicht %} <span class="stern" title="Pflichtangabe">*</span>{% endif %} {{ marke(quelle, status) }}</label>
+    <select id="in-{{ key }}" name="{{ key }}">
+      <option value="">– bitte wählen –</option>
+      {% for k in optionen %}<option value="{{ k.code }}"{% if f.wert == k.code %} selected{% endif %}>{{ option_text(k) }}</option>{% endfor %}
+    </select>
+  {% elif f.typ == 'date' %}
+    <label for="in-{{ key }}">{{ f.text }}{% if f.pflicht %} <span class="stern" title="Pflichtangabe">*</span>{% endif %} {{ marke(quelle, status) }}</label>
+    <input id="in-{{ key }}" name="{{ key }}" type="text" inputmode="numeric" autocomplete="off" placeholder="TT.MM.JJJJ" value="{{ entwurf.ungueltig.get(key) if key in entwurf.ungueltig else (f.wert|datum) }}">
+  {% elif f.typ == 'text' %}
+    <label for="in-{{ key }}">{{ f.text }}{% if f.pflicht %} <span class="stern" title="Pflichtangabe">*</span>{% endif %} {{ marke(quelle, status) }}</label>
+    <textarea id="in-{{ key }}" name="{{ key }}" rows="2" maxlength="500">{{ f.wert or '' }}</textarea>
+  {% endif %}
+  {% if quelle == 'auto' %}
+    <button type="button" class="knopf klein bestaetigen" hx-post="/fall/{{ token }}/bestaetigen/{{ hk }}" hx-vals='{"csrf": "{{ csrf }}"}' hx-target="#bogen" hx-swap="outerHTML">Vorschlag bestätigen</button>
+  {% endif %}
+  {% if f.link_id == 'immunization' and f.wert == 'yes' %}
+    <div class="unterfrage" id="feld-impfstoff">
+      <input type="hidden" name="impfung_gesendet" value="1">
+      <label for="in-impfstoff">Impfstoff <span class="stern">*</span></label>
+      <select id="in-impfstoff" name="impfstoff">
+        <option value="">– bitte wählen –</option>
+        {% for k in impf_optionen %}<option value="{{ k.code }}"{% if a.impfungen and a.impfungen[0].impfstoff_code == k.code %} selected{% endif %}>{{ k.display or k.code }}</option>{% endfor %}
+      </select>
+      <label for="in-impfdatum">Datum der (letzten) Impfung</label>
+      <input id="in-impfdatum" name="impfdatum" type="text" inputmode="numeric" autocomplete="off" placeholder="TT.MM.JJJJ" value="{{ entwurf.ungueltig.get('impfdatum') if 'impfdatum' in entwurf.ungueltig else ((a.impfungen[0].datum|datum) if a.impfungen else '') }}">
+    </div>
+  {% endif %}
+  </div>
+{% endif %}
+{% endmacro %}

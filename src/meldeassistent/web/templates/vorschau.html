@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block titel %}Vorschau – DEMIS-Meldeassistent{% endblock %}
+{% block inhalt %}
+<p><a href="/fall/{{ token }}">← Zurück zum Meldebogen</a></p>
+<h1>Vorschau der Meldung</h1>
+{% if ergebnis.fehler %}
+  <section class="karte"><h2>Die Meldung enthält Fehler</h2>
+  <ul class="fehlerliste">{% for p in ergebnis.fehler %}<li><strong>{{ p.wo }}:</strong> {{ p.text }}</li>{% endfor %}</ul>
+  <a class="knopf" href="/fall/{{ token }}">Zurück zum Meldebogen</a></section>
+{% else %}
+  <p class="untertitel">So wird die Meldung an DEMIS übermittelt. Bitte prüfen Sie die Angaben.</p>
+  {% for titel, zeilen in abschnitte.items() %}
+  <section class="block"><h2>{{ titel }}</h2>
+    <dl class="daten">
+    {% for z in zeilen %}<dt class="tiefe-{{ z.tiefe }}">{{ z.bezeichnung }}</dt><dd>{{ z.wert }}</dd>{% endfor %}
+    </dl>
+  </section>
+  {% endfor %}
+  {% if ergebnis.hinweise %}<section class="block"><h2>Hinweise</h2><ul class="hinweise">{% for p in ergebnis.hinweise %}<li>{{ p.text }}</li>{% endfor %}</ul></section>{% endif %}
+  <section class="karte">
+    <p class="meldung ok" role="status">Die Meldung wurde vom Meldungsprüfer ohne Fehler akzeptiert.</p>
+    <form method="post" action="/fall/{{ token }}/freigeben">
+      <input type="hidden" name="csrf" value="{{ csrf }}">
+      <button type="submit" class="knopf gross">Freigeben</button>
+      <a class="knopf sekundaer" href="/fall/{{ token }}">Zurück und ändern</a>
+    </form>
+    {% if testbetrieb %}<p class="klein">Testbetrieb: „Freigeben“ sendet nichts an DEMIS. Der Versand wird erst nach Einrichtung des Zertifikats angeschlossen.</p>{% endif %}
+  </section>
+{% endif %}
+{% endblock %}

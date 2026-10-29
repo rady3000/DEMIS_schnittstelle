@@ -125,6 +125,7 @@ class Aufenthalt(_Basis):
 
 class Diagnose(_Basis):
     icd_code: str | None = Field(default=None, description="ICD-10-GM-Code; None bei Freitext-Diagnosen")
+    icd_text: str | None = Field(default=None, description="Klartext zum ICD-Code, wie ihn das KIS liefert")
     freitext: str | None = None
     sicherheit: Diagnosesicherheit = Diagnosesicherheit.UNBEKANNT
     erkrankungsbeginn: date | None = None

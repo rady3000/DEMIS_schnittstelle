@@ -24,3 +24,6 @@ __pycache__/
 # Validator und FHIR-Pakete (werden per Skript geladen)
 tools/*.jar
 .fhir/
+
+# Anwendungskonfiguration mit Zugangsdaten
+config/app.env

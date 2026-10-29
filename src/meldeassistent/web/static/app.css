@@ -1,0 +1,97 @@
+/* DEMIS-Meldeassistent: schlicht, gut lesbar, ohne externe Schriften oder Skripte */
+:root {
+  --text: #1b1f24; --grau: #5a6470; --linie: #c8cfd8; --hell: #f4f6f8; --weiss: #fff;
+  --akzent: #0b5cad; --akzent-dunkel: #084a8c;
+  --kis-bg: #dbeafe; --kis-text: #1e3a8a; --kis-rand: #3b82f6;
+  --auto-bg: #fef3c7; --auto-text: #6b3a07; --auto-rand: #d97706;
+  --arzt-bg: #dcfce7; --arzt-text: #14532d; --arzt-rand: #16a34a;
+  --offen-bg: #ffedd5; --offen-text: #7c2d12; --offen-rand: #ea580c;
+  --fehler-bg: #fee2e2; --fehler-text: #7f1d1d; --fehler-rand: #dc2626;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --text: #e8ecf1; --grau: #aab4c0; --linie: #3a4452; --hell: #1b2129; --weiss: #12171d;
+    --akzent: #6cb0ff; --akzent-dunkel: #9cc9ff;
+    --kis-bg: #1e3a8a55; --kis-text: #bfd8ff; --auto-bg: #78350f55; --auto-text: #ffe2a6;
+    --arzt-bg: #14532d66; --arzt-text: #c3f3d3; --offen-bg: #7c2d1266; --offen-text: #ffd3b8;
+    --fehler-bg: #7f1d1d77; --fehler-text: #ffd0d0;
+  }
+}
+* { box-sizing: border-box; }
+body { margin: 0; font: 16px/1.5 system-ui, "Segoe UI", Roboto, sans-serif; color: var(--text); background: var(--weiss); }
+main { max-width: 78rem; margin: 0 auto; padding: 1rem 1rem 4rem; }
+h1 { font-size: 1.5rem; margin: .5rem 0; } h2 { font-size: 1.15rem; margin: .2rem 0 .6rem; } h3 { font-size: 1rem; margin: 1rem 0 .3rem; }
+a { color: var(--akzent); } a:hover { color: var(--akzent-dunkel); }
+:focus-visible { outline: 3px solid var(--akzent); outline-offset: 2px; }
+.nur-leser { position: absolute; left: -9999px; }
+.klein { font-size: .85rem; color: var(--grau); } .untertitel { color: var(--grau); margin-top: 0; }
+.testband { background: #b45309; color: #fff; text-align: center; padding: .35rem 1rem; font-weight: 600; font-size: .9rem; }
+.kopf { display: flex; justify-content: space-between; align-items: center; gap: 1rem; padding: .6rem 1rem; border-bottom: 1px solid var(--linie); background: var(--hell); }
+.logo { font-weight: 700; text-decoration: none; color: var(--text); }
+.abmelden { display: flex; align-items: center; gap: .75rem; margin: 0; } .benutzer { color: var(--grau); font-size: .9rem; }
+
+.knopf { display: inline-block; background: var(--akzent); color: #fff; border: 2px solid var(--akzent); border-radius: .4rem; padding: .55rem 1rem; font: inherit; font-weight: 600; text-decoration: none; cursor: pointer; }
+.knopf:hover { background: var(--akzent-dunkel); border-color: var(--akzent-dunkel); color: #fff; }
+.knopf.klein { padding: .25rem .6rem; font-size: .85rem; } .knopf.gross { padding: .8rem 1.4rem; font-size: 1.05rem; }
+.knopf.sekundaer { background: transparent; color: var(--akzent); } .knopf.sekundaer:hover { background: var(--hell); color: var(--akzent-dunkel); }
+.knopf.gesperrt { background: var(--hell); border-color: var(--linie); color: var(--grau); cursor: not-allowed; }
+.karte { border: 1px solid var(--linie); border-radius: .6rem; padding: 1rem 1.25rem; margin: 1rem 0; background: var(--hell); }
+.karte.schmal { max-width: 26rem; margin: 3rem auto; }
+.karte label { display: block; margin: .8rem 0 .2rem; font-weight: 600; } .karte input { width: 100%; }
+input[type=text], input[type=password], select, textarea, input:not([type]) { font: inherit; padding: .45rem .6rem; border: 1px solid var(--linie); border-radius: .35rem; background: var(--weiss); color: var(--text); max-width: 100%; }
+select { min-width: 16rem; }
+.meldung { padding: .5rem .75rem; border-radius: .4rem; margin: .5rem 0; font-weight: 600; }
+.meldung.ok { background: var(--arzt-bg); color: var(--arzt-text); } .meldung.offen { background: var(--offen-bg); color: var(--offen-text); }
+.meldung.fehler { background: var(--fehler-bg); color: var(--fehler-text); }
+.hinweis { background: var(--hell); border-left: 4px solid var(--akzent); padding: .5rem .75rem; }
+
+/* Marken: Herkunft einer Angabe, immer mit Text (nicht nur Farbe) */
+.marke { display: inline-block; font-size: .75rem; font-weight: 700; padding: .05rem .5rem; border-radius: 1rem; border: 1px solid; vertical-align: middle; white-space: nowrap; }
+.marke-kis { background: var(--kis-bg); color: var(--kis-text); border-color: var(--kis-rand); }
+.marke-auto { background: var(--auto-bg); color: var(--auto-text); border-color: var(--auto-rand); }
+.marke-arzt { background: var(--arzt-bg); color: var(--arzt-text); border-color: var(--arzt-rand); }
+.marke-offen { background: var(--offen-bg); color: var(--offen-text); border-color: var(--offen-rand); }
+.marke-fehler, .marke-tod { background: var(--fehler-bg); color: var(--fehler-text); border-color: var(--fehler-rand); }
+.marke-weg-demis { background: var(--kis-bg); color: var(--kis-text); border-color: var(--kis-rand); }
+.marke-weg-sachsen { background: var(--auto-bg); color: var(--auto-text); border-color: var(--auto-rand); }
+.marke-weg-klaerung { background: var(--offen-bg); color: var(--offen-text); border-color: var(--offen-rand); }
+.marke-weg-keiner { background: var(--hell); color: var(--grau); border-color: var(--linie); }
+
+/* Arbeitsliste */
+.tabellenrahmen { overflow-x: auto; }
+table.liste { border-collapse: collapse; width: 100%; }
+table.liste th, table.liste td { text-align: left; vertical-align: top; padding: .6rem .7rem; border-bottom: 1px solid var(--linie); }
+table.liste thead th { background: var(--hell); position: sticky; top: 0; }
+table.liste tbody th { font-weight: 600; }
+tr.weg-keiner { color: var(--grau); }
+
+/* Meldebogen */
+.bogen-raster { display: grid; grid-template-columns: minmax(0, 1fr) 21rem; gap: 1.25rem; align-items: start; }
+@media (max-width: 62rem) { .bogen-raster { grid-template-columns: 1fr; } .stand { position: static !important; } }
+.block { border: 1px solid var(--linie); border-radius: .6rem; padding: .75rem 1rem 1rem; margin: 0 0 1rem; }
+.block.quelle-kis { border-left: 6px solid var(--kis-rand); background: color-mix(in srgb, var(--kis-bg) 35%, transparent); }
+dl.daten { display: grid; grid-template-columns: 11rem 1fr; gap: .15rem 1rem; margin: 0; }
+dl.daten dt { color: var(--grau); } dl.daten dd { margin: 0; }
+.frage { border-left: 6px solid var(--linie); padding: .35rem .75rem .6rem; margin: .5rem 0; border-radius: 0 .4rem .4rem 0; }
+.frage.quelle-kis { border-left-color: var(--kis-rand); background: color-mix(in srgb, var(--kis-bg) 40%, transparent); }
+.frage.quelle-auto { border-left-color: var(--auto-rand); background: color-mix(in srgb, var(--auto-bg) 60%, transparent); }
+.frage.quelle-arzt { border-left-color: var(--arzt-rand); background: color-mix(in srgb, var(--arzt-bg) 45%, transparent); }
+.frage.ist-offen { border-left-color: var(--offen-rand); background: color-mix(in srgb, var(--offen-bg) 55%, transparent); }
+.frage.ist-fehler { border-left-color: var(--fehler-rand); background: color-mix(in srgb, var(--fehler-bg) 55%, transparent); }
+.frage fieldset { border: 0; padding: 0; margin: 0; } .frage legend, .frage > label { font-weight: 600; display: block; padding: 0; margin-bottom: .3rem; }
+.optionen { display: flex; flex-wrap: wrap; gap: .4rem 1.25rem; } .optionen.mehrspaltig { display: grid; grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr)); }
+label.radio { font-weight: 400; display: inline-flex; align-items: center; gap: .4rem; padding: .25rem .5rem; border-radius: .35rem; cursor: pointer; }
+label.radio:hover { background: var(--hell); } label.radio input { width: 1.15rem; height: 1.15rem; } label.radio.gesperrt { color: var(--grau); cursor: not-allowed; }
+.stern { color: var(--fehler-text); font-weight: 700; }
+.tiefe-1 { margin-left: 1.5rem; } .tiefe-2 { margin-left: 3rem; } .tiefe-3 { margin-left: 4.5rem; }
+.gruppentitel { font-size: .95rem; color: var(--grau); margin: .8rem 0 .2rem; }
+.unterfrage { margin: .6rem 0 .2rem 1rem; padding-left: .75rem; border-left: 2px dashed var(--linie); } .unterfrage label { display: block; font-weight: 600; margin-top: .4rem; }
+.bestaetigen { margin-top: .4rem; }
+.stand { position: sticky; top: 1rem; border: 1px solid var(--linie); border-radius: .6rem; padding: .75rem 1rem 1rem; background: var(--hell); max-height: calc(100vh - 2rem); overflow: auto; }
+.liste-offen, .hinweise, .legende, .fehlerliste { padding-left: 1.1rem; margin: .3rem 0; } .liste-offen li { margin: .25rem 0; font-size: .9rem; }
+.legende { list-style: none; padding: 0; } .legende li { margin: .25rem 0; font-size: .85rem; }
+.verwerfen { margin-top: 1rem; }
+
+.frage textarea { width: 100%; max-width: 42rem; }
+.liste-offen a { text-decoration: none; } .liste-offen a:hover { text-decoration: underline; }
+.block dl.daten { grid-template-columns: minmax(11rem, 24rem) 1fr; }

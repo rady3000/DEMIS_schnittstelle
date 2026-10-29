@@ -38,6 +38,11 @@ class Pruefergebnis:
         return not self.fehler and not self.offen
 
 
+def pruefe_fragebogen_antworten(bundle: dict, pakete: DemisPakete | None = None, streng: bool = True) -> list[Problem]:
+    """Nur die schnelle Fragebogen-Prüfung (ohne Validator), z. B. für die Live-Anzeige im Meldebogen."""
+    return _fragebogen_probleme(bundle, pakete or standard_pakete(), streng)
+
+
 def _fragebogen_probleme(bundle: dict, pakete: DemisPakete, streng: bool) -> list[Problem]:
     probleme = []
     for eintrag in bundle.get("entry", []):
@@ -47,7 +52,7 @@ def _fragebogen_probleme(bundle: dict, pakete: DemisPakete, streng: bool) -> lis
         name = r["questionnaire"].rsplit("/", 1)[-1].removeprefix("DiseaseQuestions")
         wo = "Allgemeine klinische Angaben" if name == "Common" else "Krankheitsspezifische Angaben"
         for befund in pruefe_antworten(pakete.fragebogen(name), r["item"], pakete, streng):
-            probleme.append(Problem(befund.schwere, wo, befund.text, quelle="fragebogen"))
+            probleme.append(Problem(befund.schwere, wo, befund.text, quelle="fragebogen", link_id=befund.link_id))
     return probleme
 
 

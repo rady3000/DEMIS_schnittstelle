@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block inhalt %}
+<section class="karte">
+  <h1>Meldung freigegeben</h1>
+  <p class="meldung ok" role="status">Die Meldung wurde geprüft und freigegeben.</p>
+  <p><strong>Wichtig:</strong> In dieser Programmversion ist der Versand an DEMIS noch nicht angeschlossen. Es wurde <strong>nichts gesendet</strong>.</p>
+  <p>Bearbeitungszeit: <strong>{{ dauer // 60 }}:{{ '%02d' % (dauer % 60) }} Minuten</strong> (Ziel: unter 2 Minuten).</p>
+  <p class="klein">Vorgangs-ID: {{ vorgang }}</p>
+  <p><a class="knopf" href="/">Zurück zur Arbeitsliste</a></p>
+</section>
+{% endblock %}

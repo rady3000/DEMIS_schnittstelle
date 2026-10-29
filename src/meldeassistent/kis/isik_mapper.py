@@ -246,10 +246,11 @@ def aufenthalt_aus_fhir(enc: dict, abschnitte_fhir: list[dict]) -> Aufenthalt:
 
 # --- Diagnose ----------------------------------------------------------------------------------
 def diagnose_aus_fhir(cond: dict) -> Diagnose:
-    code = sicherheit = None
+    code = sicherheit = icd_text = None
     for coding in (cond.get("code") or {}).get("coding", []):
         if (coding.get("system") or "").startswith(ICD10GM_PRAEFIX):
             code = coding.get("code")
+            icd_text = coding.get("display")
             for ext in _erweiterungen(coding, EXT_DIAGNOSESICHERHEIT):
                 sicherheit = _SICHERHEIT_NACH_KUERZEL.get(ext.get("valueCoding", {}).get("code"))
             break
@@ -259,6 +260,7 @@ def diagnose_aus_fhir(cond: dict) -> Diagnose:
     notizen = [n.get("text") for n in cond.get("note", []) if n.get("text")]
     return Diagnose(
         icd_code=code,
+        icd_text=icd_text,
         freitext=(cond.get("code") or {}).get("text"),
         sicherheit=sicherheit,
         erkrankungsbeginn=parse_datum(cond.get("onsetDateTime")),

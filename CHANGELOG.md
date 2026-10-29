@@ -2,6 +2,18 @@
 
 ## [Unveröffentlicht]
 
+### Phase 4 – Oberfläche (abgeschlossen, 29.10.2026)
+- Web-Anwendung (`python -m meldeassistent.web`): Anmeldung, Arbeitsliste der meldepflichtigen Befunde, Meldebogen, Vorschau, Freigabe (ohne Versand).
+- Meldebogen aus dem offiziellen DEMIS-Fragebogen erzeugt: Bedingte Felder (z. B. TB-Angaben nur bei TB, Impfstoff nur bei „Ja“, Sterbedatum nur bei „verstorben“), Herkunft je Angabe farblich und textlich gekennzeichnet,
+  Vorschläge müssen bestätigt werden, Stand-Kasten mit Sprungmarken, Pflichtfeldprüfung (kein „nicht erhoben“ beim Senden).
+- Vorläufiges Regelwerk (`regelwerk.py`) für die Arbeitsliste: DEMIS (CDFD, MYTD, MSVD), Landesmeldung Sachsen (Influenza, Tod bei Infektionskrankheit außer AIDS), Klärung bei möglicher Häufung (Norovirus). Phase 6 ersetzt es durch das YAML-Regelwerk.
+- Audit-Log (`audit.py`): nur Vorgangs-ID, Zeit, Benutzer, Meldeweg, Status, Dauer.
+- Sicherheit: serverseitige Sitzungen, Sperre nach 5 Fehlversuchen, CSRF-Schutz, strikte Content-Security-Policy, keine externen Ressourcen (HTMX lokal, Lizenz 0BSD), Cookie HttpOnly/SameSite=Strict, Fallkennungen statt KIS-IDs in Adressen.
+- Zeitmessung (`tools/zeitmessung.js`, `docs/zeitmessung.md`): vier DEMIS-Fälle im echten Browser, 11 bis 22 Eingaben, Systemwartezeit 3 bis 7 Sekunden, Schätzung 0:47 bis 1:33 min.
+- Tests: Oberfläche (44), reine Logik (50). Mutationsprüfung: vier absichtlich eingebaute Sicherheitslücken (wirkungsloses CSRF, KIS-ID als Kennung, feste Sitzungs-ID, Name im Audit-Log) werden erkannt.
+- Behoben (durch Tests gefunden): Eine zweite Arbeitsliste machte offene Meldebögen ungültig (Fallkennung jetzt stabil je Sitzung); teilweise abgeschickte Formulare löschten Antworten; Folgefragen wurden bei gleichzeitigem Absenden ignoriert; Jahre vor 1900 wurden akzeptiert.
+- Offen: „Tätigkeit in infektionsschutzrelevanter Einrichtung = Ja“ noch nicht möglich; echte Zeitmessung mit einer Ärztin/einem Arzt.
+
 ### Phase 3 – Meldungs-Erzeugung und Validierung (abgeschlossen, 28.10.2026)
 - Mapper `meldeassistent.demis`: aus internem KIS-Modell + Meldeangaben entsteht ein DEMIS-Bundle (`NotificationBundleDisease`) für C. difficile (CDFD), Tuberkulose (MYTD) und Masern (MSVD).
 - Katalog der DEMIS-Pakete (`pakete.py`): Fragebögen und Wertemengen direkt aus den Paketen, auch verschachtelte Codes.

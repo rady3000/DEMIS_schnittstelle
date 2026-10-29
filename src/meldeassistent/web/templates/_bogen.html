@@ -1,0 +1,109 @@
+{% import "_frage.html" as q with context %}
+<div id="bogen" class="bogen-raster">
+<form id="bogenform" class="bogenformular" method="post" action="/fall/{{ token }}/bogen"
+      hx-post="/fall/{{ token }}/bogen" hx-trigger="change" hx-target="#bogen" hx-swap="outerHTML" hx-sync="this:replace" autocomplete="off">
+  <input type="hidden" name="csrf" value="{{ csrf }}">
+
+  <section class="block quelle-kis" aria-labelledby="h-kis">
+    <h2 id="h-kis">Aus dem KIS übernommen <span class="marke marke-kis">aus KIS</span></h2>
+    {% set p = fall.patient %}
+    <dl class="daten">
+      <dt>Patient</dt><dd><strong>{{ p.anzeigename }}</strong></dd>
+      <dt>Geburtsdatum</dt><dd>{{ p.geburtsdatum|datum or '–' }}{% if p.geburtsdatum %} ({{ alter(p.geburtsdatum, heute) }} Jahre){% endif %}</dd>
+      <dt>Geschlecht</dt><dd>{{ {'maennlich': 'männlich', 'weiblich': 'weiblich', 'divers': 'divers', 'unbestimmt': 'unbestimmt'}.get(p.geschlecht.value, 'unbekannt') }}</dd>
+      <dt>Wohnanschrift</dt><dd>{% if p.adresse %}{{ p.adresse.zeilen|join(', ') }}, {{ p.adresse.plz }} {{ p.adresse.ort }}{% else %}–{% endif %}</dd>
+      <dt>Telefon</dt><dd>{{ p.telefon or '–' }}</dd>
+      <dt>Aufnahme</dt><dd>{{ fall.aufenthalt.beginn|datum or '–' }}{% if not fall.aufenthalt.laufend %} bis {{ fall.aufenthalt.ende|datum }}{% endif %}</dd>
+      <dt>Stationen</dt><dd>{% for ab in fall.aufenthalt.abschnitte %}{{ ab.station or ab.fachabteilung_name or '–' }}{% if ab.ist_intensivstation %} (Intensiv){% endif %}{% if not loop.last %} → {% endif %}{% else %}–{% endfor %}</dd>
+      {% for d in fall.diagnosen %}<dt>Diagnose</dt><dd>{{ d.icd_code or '–' }} {{ d.icd_text or d.freitext or '' }}{% if d.sicherheit.value == 'verdacht' %} (Verdacht){% endif %}</dd>{% endfor %}
+      {% for l in fall.laborbefunde %}<dt>Labor</dt><dd>{{ l.untersuchung }}: {{ l.ergebnis }}{% if l.datum %} ({{ l.datum|datum }}){% endif %}</dd>{% endfor %}
+    </dl>
+  </section>
+
+  <section class="block" aria-labelledby="h-erkr">
+    <h2 id="h-erkr">Erkrankung</h2>
+    {% set dq = 'kis' if herkunft.get('diagnose') else None %}
+    <div id="feld-verdacht" class="frage quelle-{{ herkunft.get('verdacht') or dq or 'leer' }}">
+      <fieldset>
+        <legend>Art der Meldung {{ q.marke(herkunft.get('verdacht') or dq, None) }}</legend>
+        <div class="optionen">
+          <label class="radio"><input type="radio" name="verdacht" value="nein"{% if not a.verdacht %} checked{% endif %}> Erkrankung</label>
+          <label class="radio"><input type="radio" name="verdacht" value="ja"{% if a.verdacht %} checked{% endif %}> Verdacht einer Erkrankung</label>
+        </div>
+      </fieldset>
+    </div>
+    <div id="feld-erkrankungsbeginn" class="frage quelle-{{ herkunft.get('erkrankungsbeginn') or (dq if a.erkrankungsbeginn else None) or 'leer' }}{% if feld_status.get('feld-erkrankungsbeginn') %} ist-fehler{% endif %}">
+      <label for="in-erkrankungsbeginn">Erkrankt am {{ q.marke(herkunft.get('erkrankungsbeginn') or (dq if a.erkrankungsbeginn else None), feld_status.get('feld-erkrankungsbeginn')) }}</label>
+      <input id="in-erkrankungsbeginn" name="erkrankungsbeginn" type="text" inputmode="numeric" autocomplete="off" placeholder="TT.MM.JJJJ"
+             value="{{ entwurf.ungueltig['erkrankungsbeginn'] if 'erkrankungsbeginn' in entwurf.ungueltig else (a.erkrankungsbeginn|datum) }}">
+    </div>
+    <div id="feld-diagnosedatum" class="frage quelle-{{ herkunft.get('diagnosedatum') or (dq if a.diagnosedatum else None) or 'leer' }}{% if feld_status.get('feld-diagnosedatum') %} ist-fehler{% endif %}">
+      <label for="in-diagnosedatum">Diagnose gestellt am {{ q.marke(herkunft.get('diagnosedatum') or (dq if a.diagnosedatum else None), feld_status.get('feld-diagnosedatum')) }}</label>
+      <input id="in-diagnosedatum" name="diagnosedatum" type="text" inputmode="numeric" autocomplete="off" placeholder="TT.MM.JJJJ"
+             value="{{ entwurf.ungueltig['diagnosedatum'] if 'diagnosedatum' in entwurf.ungueltig else (a.diagnosedatum|datum) }}">
+    </div>
+    {% if a.kuerzel == 'MSVD' %}
+    <div id="feld-symptome" class="frage quelle-{{ 'arzt' if a.symptome else 'leer' }}">
+      <input type="hidden" name="symptom_gesendet" value="1">
+      <fieldset>
+        <legend>Symptome (Masern) {{ q.marke('arzt' if a.symptome else None, None) }}</legend>
+        <div class="optionen mehrspaltig">
+        {% for k in symptom_optionen %}
+          {% if k.code not in ('NASK', 'ASKU') %}<label class="radio"><input type="checkbox" name="symptom" value="{{ k.code }}"{% if k.code in a.symptome %} checked{% endif %}> {{ k.display }}</label>{% endif %}
+        {% endfor %}
+        </div>
+      </fieldset>
+    </div>
+    {% endif %}
+    <div class="frage quelle-{{ 'arzt' if a.diagnosehinweis else 'leer' }}">
+      <label for="in-diagnosehinweis">Hinweis zur Diagnose (freiwillig)</label>
+      <textarea id="in-diagnosehinweis" name="diagnosehinweis" rows="2" maxlength="500" placeholder="Wird nur gesendet, wenn Sie hier etwas eintragen. Bitte keine zusätzlichen Personendaten.">{{ a.diagnosehinweis or '' }}</textarea>
+    </div>
+  </section>
+
+  <section class="block" aria-labelledby="h-allg">
+    <h2 id="h-allg">Allgemeine klinische und epidemiologische Angaben</h2>
+    {% for f in stand.fragen_allgemein %}{{ q.frage(f, 'a') }}{% endfor %}
+  </section>
+
+  <section class="block" aria-labelledby="h-spez">
+    <h2 id="h-spez">Angaben zur Erkrankung ({{ {'CDFD': 'C. difficile, schwere Verlaufsform', 'MYTD': 'Tuberkulose', 'MSVD': 'Masern'}.get(a.kuerzel, a.kuerzel) }})</h2>
+    {% for f in stand.fragen_spezifisch %}{{ q.frage(f, 's') }}{% endfor %}
+  </section>
+</form>
+
+<aside class="stand" aria-labelledby="h-stand">
+  <h2 id="h-stand">Stand der Meldung</h2>
+  <div aria-live="polite">
+  {% if stand.fehler %}
+    <p class="meldung fehler" role="alert">{{ stand.fehler|length }} Fehler müssen behoben werden:</p>
+    <ul class="liste-offen">{% for o in stand.fehler %}<li><a href="#{{ o.feld }}">{{ o.text }}</a></li>{% endfor %}</ul>
+  {% endif %}
+  {% if stand.offen %}
+    <p class="meldung offen">Noch {{ stand.offen|length }} {{ 'Punkt' if stand.offen|length == 1 else 'Punkte' }} offen:</p>
+    <ul class="liste-offen">{% for o in stand.offen %}<li><a href="#{{ o.feld }}">{{ o.text }}</a></li>{% endfor %}</ul>
+  {% endif %}
+  {% if stand.bereit %}
+    <p class="meldung ok">Alles beantwortet.</p>
+    <a class="knopf gross" href="/fall/{{ token }}/vorschau">Weiter zur Vorschau</a>
+  {% else %}
+    <span class="knopf gross gesperrt" role="note" aria-disabled="true">Weiter zur Vorschau</span>
+  {% endif %}
+  </div>
+  {% if stand.hinweise %}
+    <h3>Hinweise zu den KIS-Daten</h3>
+    <ul class="hinweise">{% for h in stand.hinweise %}<li>{{ h }}</li>{% endfor %}</ul>
+  {% endif %}
+  <h3>Farben</h3>
+  <ul class="legende">
+    <li><span class="marke marke-kis">aus KIS</span> automatisch übernommen</li>
+    <li><span class="marke marke-auto">Vorschlag</span> bitte bestätigen</li>
+    <li><span class="marke marke-arzt">von Ihnen</span> von Ihnen angegeben</li>
+    <li><span class="marke marke-offen">offen</span> noch zu beantworten</li>
+  </ul>
+  <form method="post" action="/fall/{{ token }}/verwerfen" class="verwerfen">
+    <input type="hidden" name="csrf" value="{{ csrf }}">
+    <button type="submit" class="knopf klein sekundaer">Entwurf verwerfen</button>
+  </form>
+</aside>
+</div>

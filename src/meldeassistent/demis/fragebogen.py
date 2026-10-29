@@ -26,7 +26,7 @@ from dataclasses import dataclass
 from datetime import date
 from typing import Any
 
-from .pakete import DemisPakete
+from .pakete import DemisPakete, Konzept
 
 NULLFLAVOR = "http://terminology.hl7.org/CodeSystem/v3-NullFlavor"
 DATUM = re.compile(r"^\d{4}(-\d{2}(-\d{2})?)?$")
@@ -44,6 +44,14 @@ class Befund:
     schwere: str  # "fehler" | "offen" (noch nicht beantwortet) | "hinweis"
     link_id: str
     text: str
+
+
+def _link_ids(frage: dict) -> list[str]:
+    ergebnis = []
+    for kind in frage.get("item", []):
+        ergebnis.append(kind["linkId"])
+        ergebnis += _link_ids(kind)
+    return ergebnis
 
 
 # =============================================================================================
@@ -105,12 +113,8 @@ def _codes(wert: Any) -> list[str]:
     return [str(wert)] if wert is not None else []
 
 
-def baue_antworten(fragebogen: dict, antworten: dict[str, Any], pakete: DemisPakete, vorbelegen: bool = True) -> list[dict]:
-    """Baut die ``item``-Liste einer QuestionnaireResponse.
-
-    ``vorbelegen``: Auswahlfragen ohne Antwort erhalten den im Fragebogen festgelegten Anfangswert
-    (bei Ja/Nein-Fragen "NASK" = nicht erhoben). Das schreibt DEMIS für unausgefüllte Fragebögen vor.
-    """
+def bekannte_antworten(fragebogen: dict, antworten: dict[str, Any], vorbelegen: bool = True) -> dict[str, list[str]]:
+    """Alle gegebenen Antwort-Codes je Frage (für die Bedingungen). Anfangswerte zählen mit, wenn ``vorbelegen``."""
     bekannt: dict[str, list[str]] = {}
 
     def sammle(daten: dict) -> None:
@@ -121,15 +125,24 @@ def baue_antworten(fragebogen: dict, antworten: dict[str, Any], pakete: DemisPak
             else:
                 bekannt.setdefault(k, []).extend(_codes(v))
 
-    sammle(antworten)
-    # Vorbelegte Anfangswerte müssen für Bedingungen mitzählen (z. B. NASK löst keine Folgefragen aus)
     def sammle_initial(items: list[dict]) -> None:
         for f in items:
             if f["linkId"] not in bekannt and vorbelegen and (i := _initial(f)):
                 bekannt[f["linkId"]] = [i["valueCoding"]["code"]]
             sammle_initial(f.get("item", []))
 
+    sammle(antworten)
     sammle_initial(fragebogen["item"])
+    return bekannt
+
+
+def baue_antworten(fragebogen: dict, antworten: dict[str, Any], pakete: DemisPakete, vorbelegen: bool = True) -> list[dict]:
+    """Baut die ``item``-Liste einer QuestionnaireResponse.
+
+    ``vorbelegen``: Auswahlfragen ohne Antwort erhalten den im Fragebogen festgelegten Anfangswert
+    (bei Ja/Nein-Fragen "NASK" = nicht erhoben). Das schreibt DEMIS für unausgefüllte Fragebögen vor.
+    """
+    bekannt = bekannte_antworten(fragebogen, antworten, vorbelegen)
 
     def gehe(fragen: list[dict], daten: dict) -> list[dict]:
         ergebnis = []
@@ -139,7 +152,10 @@ def baue_antworten(fragebogen: dict, antworten: dict[str, Any], pakete: DemisPak
                 continue
             if f["type"] == "group":
                 if f.get("repeats"):
-                    for eintrag in daten.get(lid) or []:
+                    instanzen = daten.get(lid)
+                    if instanzen is None:  # flache Antworten (aus der Oberfläche): eine Wiederholung bilden
+                        instanzen = [daten] if any(k in daten for k in _link_ids(f)) else []
+                    for eintrag in instanzen:
                         kinder = gehe(f.get("item", []), eintrag)
                         if kinder:
                             ergebnis.append({"linkId": lid, "item": kinder})
@@ -233,7 +249,9 @@ def pruefe_antworten(fragebogen: dict, items: list[dict], pakete: DemisPakete, s
             for a in antworten:
                 _pruefe_antwort(f, a, text, befunde, pakete)
                 if streng and (a.get("valueCoding") or {}).get("code") == "NASK":
-                    befunde.append(Befund("offen", lid, f"Noch nicht beantwortet: „{text}“ (bitte Ja, Nein oder „nicht ermittelbar“ wählen)."))
+                    codes = {k.code for k in pakete.wertemenge(f["answerValueSet"]).konzepte or ()}
+                    wahl = "Ja, Nein oder „nicht ermittelbar“" if codes == {"yes", "no", "NASK", "ASKU"} else "eine Antwort"
+                    befunde.append(Befund("offen", lid, f"Noch nicht beantwortet: „{text}“ (bitte {wahl} wählen)."))
                 if f.get("item"):
                     pruefe_ebene(f["item"], a.get("item", []))
             if not antworten and f.get("item"):
@@ -269,3 +287,49 @@ def _pruefe_antwort(frage: dict, antwort: dict, text: str, befunde: list[Befund]
     elif typ == "reference":
         if not REFERENZ.match((antwort.get("valueReference") or {}).get("reference", "")):
             befunde.append(Befund("fehler", lid, f"„{text}“: Es fehlt der Verweis auf die zugehörige Angabe."))
+
+
+# =============================================================================================
+# Ansicht für die Oberfläche
+# =============================================================================================
+@dataclass(frozen=True)
+class Frage:
+    """Eine gerade sichtbare Frage des Meldebogens (unabhängig von HTML)."""
+
+    link_id: str
+    text: str
+    typ: str  # choice | date | text | reference | group
+    pflicht: bool
+    tiefe: int  # Einrückung: 0 = oberste Ebene
+    optionen: tuple[Konzept, ...] = ()
+    wert: str | None = None  # aktuelle Antwort (Code, Datum oder Text)
+    hat_nask: bool = False  # Frage ist mit "nicht erhoben" vorbelegt
+
+
+def formular_fragen(fragebogen: dict, antworten: dict[str, Any], pakete: DemisPakete) -> list[Frage]:
+    """Die Fragen, die bei den bisherigen Antworten gestellt werden (Bedingungen ausgewertet), in Reihenfolge."""
+    bekannt = bekannte_antworten(fragebogen, antworten, vorbelegen=True)
+    ergebnis: list[Frage] = []
+
+    def gehe(fragen: list[dict], tiefe: int) -> None:
+        for f in fragen:
+            if not _aktiv(f, bekannt):
+                continue
+            if f["type"] == "group":
+                ergebnis.append(Frage(f["linkId"], _gruppenname(f), "group", bool(f.get("required")), tiefe))
+                gehe(f.get("item", []), tiefe + 1)
+                continue
+            optionen: tuple[Konzept, ...] = ()
+            if f["type"] == "choice":
+                optionen = pakete.wertemenge(f["answerValueSet"]).konzepte or ()
+            wert = antworten.get(f["linkId"])
+            ergebnis.append(
+                Frage(
+                    f["linkId"], f.get("text") or f["linkId"], f["type"], bool(f.get("required")), tiefe,
+                    optionen, None if wert is None else str(wert), bool(f.get("initial")),
+                )
+            )
+            gehe(f.get("item", []), tiefe + 1)
+
+    gehe(fragebogen["item"], 0)
+    return ergebnis

@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block titel %}Meldepflichtige Befunde – DEMIS-Meldeassistent{% endblock %}
+{% block inhalt %}
+<h1>Meldepflichtige Befunde</h1>
+<p class="untertitel">
+  {% if alle %}Alle Fälle der letzten Tage.{% else %}Nur Fälle, bei denen nach dem Regelwerk eine Meldung nötig sein kann.{% endif %}
+  <a href="/{% if not alle %}?alle=1{% endif %}">{% if alle %}Nur meldepflichtige anzeigen{% else %}Auch nicht meldepflichtige anzeigen ({{ anzahl_nicht }}){% endif %}</a>
+</p>
+{% if not zeilen %}
+<p class="leer">Keine Fälle gefunden.</p>
+{% else %}
+<div class="tabellenrahmen">
+<table class="liste">
+  <caption class="nur-leser">Fälle mit Patient, Station, Diagnose und Meldeweg</caption>
+  <thead><tr><th scope="col">Patient</th><th scope="col">Station</th><th scope="col">Diagnose</th><th scope="col">Meldeweg</th><th scope="col">Aktion</th></tr></thead>
+  <tbody>
+  {% for r in zeilen %}
+  <tr class="weg-{{ r.b.weg.value }}">
+    <th scope="row">
+      {{ r.z.patient_name }}
+      <span class="klein">{% if r.z.geburtsdatum %}{{ r.z.geburtsdatum|datum }} ({{ alter(r.z.geburtsdatum, heute) }} J.){% endif %}</span>
+      {% if r.z.verstorben.value == 'ja' %}<span class="marke marke-tod">verstorben</span>{% endif %}
+    </th>
+    <td>{{ r.z.station or '–' }}{% if not r.z.laufend %} <span class="klein">(Aufenthalt beendet)</span>{% endif %}</td>
+    <td>
+      {% for d in r.z.diagnosen %}
+        <div><strong>{{ d.icd_code or '–' }}</strong> {{ d.icd_text or d.freitext or '' }}
+        {% if d.sicherheit.value == 'verdacht' %}<span class="marke marke-auto">Verdacht</span>{% endif %}</div>
+      {% else %}–{% endfor %}
+    </td>
+    <td>
+      <span class="marke marke-weg-{{ r.b.weg.value }}">{{ WEG_NAMEN[r.b.weg] }}{% if r.b.kuerzel %} ({{ r.b.kuerzel }}){% endif %}</span>
+      <div class="klein">{{ r.b.grund }}</div>
+    </td>
+    <td>
+      <a class="knopf klein" href="/fall/{{ r.token }}">{% if r.b.weg == Meldeweg.DEMIS %}{% if r.entwurf %}Weiter bearbeiten{% else %}Meldung bearbeiten{% endif %}{% else %}Ansehen{% endif %}</a>
+    </td>
+  </tr>
+  {% endfor %}
+  </tbody>
+</table>
+</div>
+{% endif %}
+{% endblock %}

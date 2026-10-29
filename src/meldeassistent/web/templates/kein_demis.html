@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block titel %}Kein DEMIS-Meldeweg – DEMIS-Meldeassistent{% endblock %}
+{% block inhalt %}
+<p><a href="/">← Zurück zur Arbeitsliste</a></p>
+<h1>{{ fall.patient.anzeigename }}</h1>
+<section class="karte quelle-kis">
+  <h2>Meldeweg: {{ WEG_NAMEN[ref.bewertung.weg] }}</h2>
+  <p>{{ ref.bewertung.grund }}</p>
+  {% if ref.bewertung.weg == Meldeweg.SACHSEN %}
+  <p class="hinweis">Die Landesmeldung (Formular als PDF und Datensatz für das Gesundheitsamt) wird in der nächsten Programmversion (Phase 6) angeboten. Bis dahin bitte das Papierformular verwenden.</p>
+  {% elif ref.bewertung.weg == Meldeweg.KLAERUNG %}
+  <p class="hinweis">Bitte mit der Krankenhaushygiene klären. Das Landesformular enthält eine Zeile für „zwei oder mehr nosokomiale Infektionen“.</p>
+  {% endif %}
+  <dl class="daten">
+    <dt>Geburtsdatum</dt><dd>{{ fall.patient.geburtsdatum|datum }}{% if fall.patient.geburtsdatum %} ({{ alter(fall.patient.geburtsdatum, heute) }} Jahre){% endif %}</dd>
+    <dt>Aktuelle Station</dt><dd>{{ fall.aufenthalt.aktuelle_station or '–' }}</dd>
+    {% for d in fall.diagnosen %}<dt>Diagnose</dt><dd>{{ d.icd_code }} {{ d.icd_text or '' }}</dd>{% endfor %}
+  </dl>
+</section>
+{% endblock %}

@@ -74,6 +74,16 @@ Stand: 28.10.2026 · Erledigt = ☑, offen = ☐.
 - ☐ Soll der Assistent bei „nicht über DEMIS meldbar“ (z. B. saisonale Influenza) trotzdem die Landesmeldung vorbereiten?
 - ☐ Soll das Meldeportal (SMC-B) als dokumentierter Rückfallweg im Handbuch genannt werden, falls die FHIR-Anbindung ausfällt?
 
+## 5a. Offene Punkte der Oberfläche (Phase 4)
+- ☐ **Abnahme durch Sie:** „Ich kann eine Meldung allein durchklicken“ und eine echte Zeitmessung (siehe `docs/zeitmessung.md`; die Tuberkulose-Meldung ist mit 22 Eingaben am knappsten).
+- ☐ **„Tätigkeit in einer infektionsschutzrelevanten Einrichtung“ mit Ja** ist noch nicht möglich (braucht eine eigene Einrichtungsangabe als Ressource). Die Oberfläche sperrt „Ja“ mit Hinweis. Soll das in Phase 4b nachgerüstet werden?
+- ☐ **C. difficile: schwer oder nicht schwer?** Die Arbeitsliste ordnet jede toxinbildende CDI (A04.7) dem DEMIS-Weg zu. Nicht schwere Verläufe wären nur Landesmeldung (§ 1 Abs. 1 Nr. 5 SächsIfSMeldeVO). Die Entscheidung „schwer“ trifft derzeit der Bogen
+  (Vorschlag „Intensivstation“); eine saubere Unterscheidung kommt mit dem Regelwerk in Phase 6.
+- ☐ **Meldende Person:** Aktuell ein fester Test-Melder aus der Konfiguration. Im Echtbetrieb muss Name und Telefon der angemeldeten Ärztin/des Arztes aus dem Klinik-Verzeichnis (LDAP/AD) kommen.
+- ☐ **Entwürfe nur im Arbeitsspeicher:** Ein Neustart der Anwendung verwirft angefangene Meldungen (gewollt wegen Datenschutz). Reicht das, oder soll es einen geschützten, befristeten Zwischenspeicher geben (Entscheidung mit dem Datenschutzbeauftragten)?
+- ☐ **Länder- und Regionsnamen** der Antwortlisten sind Übersetzungen aus `pycountry` bzw. die Texte der DEMIS-Wertemenge. Bitte stichprobenartig gegenlesen.
+- ☐ **Barrierefreiheit/Browser:** Bedienung per Tastatur ist vorgesehen (Beschriftungen, Fokus, keine Maus nötig), aber noch nicht mit Screenreader und Klinik-Browsern geprüft.
+
 ## 6. Datenschutz / Entscheidungen der Projektleitung
 - ☐ Darf die DEMIS-Quittung (PDF mit Meldungsdaten) gespeichert werden (Regel 5)? Aufbewahrungsdauer? Zugriffsrechte?
 - ☐ Datenschutzbeauftragten früh einbinden (Zuarbeit in Phase 7).
