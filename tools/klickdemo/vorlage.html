@@ -1,0 +1,367 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DEMIS-Meldeassistent – Klick-Demo</title>
+<style>
+/*APP_CSS*/
+/* --- nur für die Klick-Demo --- */
+.demoband { background: #0b5cad; color: #fff; text-align: center; padding: .4rem 1rem; font-weight: 600; font-size: .9rem; }
+.demoband span { font-weight: 400; }
+details.info { border: 1px solid var(--linie); border-radius: .6rem; padding: .5rem 1rem; margin: 1rem 0; background: var(--hell); }
+details.info summary { cursor: pointer; font-weight: 700; }
+details.info ul { margin: .5rem 0; padding-left: 1.2rem; } details.info li { margin: .3rem 0; }
+.fuss { margin-top: 2rem; font-size: .85rem; color: var(--grau); }
+button.link { background: none; border: 0; padding: 0; font: inherit; color: var(--akzent); text-decoration: underline; cursor: pointer; }
+</style>
+</head>
+<body>
+<div class="demoband">KLICK-DEMO <span>– erfundene Testdaten. Keine Verbindung zu KIS oder DEMIS. Es wird nichts gesendet und nichts gespeichert.</span></div>
+<header class="kopf">
+  <a class="logo" href="#/">DEMIS-Meldeassistent</a>
+  <span class="benutzer">Angemeldet: Dr. Test (Demo) &nbsp; <button type="button" class="knopf klein" id="neustart" title="Alle Eingaben löschen und von vorn beginnen">Demo zurücksetzen</button></span>
+</header>
+<main id="inhalt"></main>
+
+<script>
+"use strict";
+const D = /*DATEN*/null;
+const AUTO = new Set(D.automatisch), NICHT_JA = new Set(D.nichtUnterstuetztJa);
+let entwuerfe = {};     // Fall-Nummer -> Entwurf (nur im Arbeitsspeicher dieser Seite)
+let alleAnzeigen = false;
+
+/* ---------- Hilfsfunktionen ---------- */
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const datumDe = iso => iso ? String(iso).slice(0, 10).split("-").reverse().join(".") : "";
+function datumAusEingabe(text) {
+  text = (text || "").trim();
+  let m = /^(\d{4})(?:-(\d{2})(?:-(\d{2}))?)?$/.exec(text), jahr, monat, tag;
+  if (m) { [, jahr, monat, tag] = m; }
+  else if ((m = /^(?:(?:(\d{1,2})\.)?(\d{1,2})\.)?(\d{4})$/.exec(text))) { [, tag, monat, jahr] = m; }
+  else return null;
+  if (+jahr < 1900 || +jahr > 2100) return null;
+  if (tag) { const d = new Date(+jahr, +monat - 1, +tag); if (d.getMonth() !== +monat - 1 || d.getDate() !== +tag) return null; }
+  else if (monat && (+monat < 1 || +monat > 12)) return null;
+  return [jahr, monat && monat.padStart(2, "0"), tag && tag.padStart(2, "0")].filter(Boolean).join("-");
+}
+const istJaNein = opt => { const c = opt.map(o => o.code).sort().join(","); return c === ["ASKU","NASK","no","yes"].sort().join(","); };
+
+/* ---------- Fragebogen-Logik (Nachbau von meldeassistent.demis.fragebogen) ---------- */
+function bekannte(fragen, antw) {
+  const bk = {};
+  for (const [k, v] of Object.entries(antw)) bk[k] = [v];
+  (function lauf(items) { for (const f of items) { if (!(f.id in bk) && f.anfang) bk[f.id] = [f.anfang]; lauf(f.kinder || []); } })(fragen);
+  return bk;
+}
+function aktiv(f, bk) {
+  if (!f.wenn) return true;
+  const erg = f.wenn.map(b => {
+    const gegeben = bk[b.frage] || [];
+    if (b.op === "=") return gegeben.includes(b.wert);
+    if (b.op === "!=") return gegeben.length > 0 && !gegeben.includes(b.wert);
+    return false;
+  });
+  return f.verhalten === "any" ? erg.some(Boolean) : erg.every(Boolean);
+}
+function sichtbar(fragen, antw) {
+  const bk = bekannte(fragen, antw), aus = [];
+  (function lauf(items, tiefe) {
+    for (const f of items) {
+      if (!aktiv(f, bk)) continue;
+      aus.push({ f, tiefe });
+      lauf(f.kinder || [], tiefe + 1);
+    }
+  })(fragen, 0);
+  return aus;
+}
+const zeigbar = f => f.typ !== "group" && f.typ !== "reference" && !AUTO.has(f.id);
+
+/* ---------- Entwurf ---------- */
+function neuerEntwurf(nr) {
+  const fall = D.faelle[nr], s = fall.start;
+  return {
+    nr, fall, k: fall.kuerzel, start: Date.now(),
+    allg: { ...s.allgemein }, spez: { ...s.spezifisch }, herkunft: { ...s.herkunft },
+    verdacht: s.verdacht, beginn: datumAusEingabe(s.beginn), diagnosedatum: datumAusEingabe(s.diagnosedatum),
+    hinweis: "", symptome: [], impfstoff: null, impfdatum: null, ungueltig: {},
+  };
+}
+const quelleDatum = (e, name, wert) => e.herkunft[name] || (wert && e.fall.start.diagnoseKis ? "kis" : null);
+
+function uebernehmen(e, wurzel) {
+  const neuUngueltig = {};
+  for (const [praefix, fragen, antw] of [["a", D.fragebogen.allgemein, e.allg], ["s", D.fragebogen[e.k], e.spez]]) {
+    for (const { f } of sichtbar(fragen, antw)) {
+      if (!zeigbar(f)) continue;
+      const key = praefix + "." + f.id, el = wurzel.querySelector(`[data-key="${CSS.escape(key)}"]`);
+      if (!el) continue;                       // wurde in diesem Zug erst sichtbar: unverändert lassen
+      let roh = null;
+      if (f.typ === "choice" && el.dataset.art === "radio") { const c = el.querySelector("input:checked"); roh = c ? c.value : null; }
+      else { const i = el.querySelector("select, input, textarea"); roh = i.value.trim() || null; }
+      const alt = antw[f.id];
+      if (f.typ === "date" && roh !== null) { const iso = datumAusEingabe(roh); if (iso === null) neuUngueltig[key] = roh; roh = iso; }
+      if (roh === null) delete antw[f.id]; else antw[f.id] = roh;
+      if (roh !== (alt ?? null)) {
+        const hk = (praefix === "a" ? "allgemein." : "spezifisch.") + f.id;
+        if (roh === null) delete e.herkunft[hk]; else e.herkunft[hk] = "arzt";
+      }
+    }
+    // Antworten auf Fragen, die jetzt nicht mehr gestellt werden, entfernen
+    const ids = new Set(sichtbar(fragen, antw).map(x => x.f.id));
+    for (const id of Object.keys(antw)) if (!ids.has(id) && !AUTO.has(id)) { delete antw[id]; delete e.herkunft[(praefix === "a" ? "allgemein." : "spezifisch.") + id]; }
+  }
+  const val = n => { const i = wurzel.querySelector(`[name="${n}"]`); return i ? i.value.trim() : null; };
+  const v = wurzel.querySelector('[name="verdacht"]:checked');
+  if (v) { const neu = v.value === "ja"; if (neu !== e.verdacht) e.herkunft.verdacht = "arzt"; e.verdacht = neu; }
+  for (const [name, feld] of [["erkrankungsbeginn", "beginn"], ["diagnosedatum", "diagnosedatum"]]) {
+    const roh = val(name); if (roh === null) continue;
+    const iso = roh ? datumAusEingabe(roh) : null;
+    if (roh && (iso === null || iso.length !== 10)) { neuUngueltig[name] = roh; }
+    const neu = iso && iso.length === 10 ? iso : null;
+    if (neu !== e[feld]) e.herkunft[name] = "arzt";
+    e[feld] = neu;
+  }
+  const hin = val("diagnosehinweis"); if (hin !== null) e.hinweis = hin;
+  if (wurzel.querySelector('[name="symptom_gesendet"]')) e.symptome = [...wurzel.querySelectorAll('[name="symptom"]:checked')].map(c => c.value);
+  if (wurzel.querySelector('[name="impfung_gesendet"]')) {
+    e.impfstoff = val("impfstoff") || null;
+    const roh = val("impfdatum");
+    if (roh) { const iso = datumAusEingabe(roh); if (iso === null) neuUngueltig.impfdatum = roh; e.impfdatum = iso; } else e.impfdatum = null;
+  }
+  if (e.spez.immunization !== "yes") { e.impfstoff = null; e.impfdatum = null; }
+  e.ungueltig = neuUngueltig;
+}
+
+function bewerten(e) {
+  const offen = [], fehler = [];
+  for (const [praefix, fragen, antw] of [["a", D.fragebogen.allgemein, e.allg], ["s", D.fragebogen[e.k], e.spez]]) {
+    for (const { f } of sichtbar(fragen, antw)) {
+      if (!zeigbar(f) || f.typ === "text" && !f.pflicht) continue;
+      const v = antw[f.id], ziel = `feld-${praefix}.${f.id}`;
+      if (v === undefined && f.anfang === "NASK" || v === "NASK") offen.push({ ziel, text: `„${f.text}“`, art: "offen" });
+      else if (v === undefined && f.pflicht && !f.anfang) fehler.push({ ziel, text: `Pflichtfrage nicht beantwortet: „${f.text}“`, art: "fehler" });
+    }
+  }
+  for (const [hk, q] of Object.entries(e.herkunft)) if (q === "auto") {
+    const [gruppe, id] = hk.split(/\.(.+)/), praefix = gruppe === "allgemein" ? "a" : "s";
+    const f = sichtbar(praefix === "a" ? D.fragebogen.allgemein : D.fragebogen[e.k], praefix === "a" ? e.allg : e.spez).map(x => x.f).find(x => x.id === id);
+    if (f) offen.push({ ziel: `feld-${praefix}.${id}`, text: `Vorschlag bitte bestätigen: „${f.text}“`, art: "bestaetigen" });
+  }
+  if (e.spez.immunization === "yes" && !e.impfstoff) offen.push({ ziel: "feld-impfstoff", text: "Bitte den Impfstoff angeben (Impfung wurde mit „Ja“ beantwortet).", art: "offen" });
+  for (const [name, roh] of Object.entries(e.ungueltig))
+    fehler.push({ ziel: "feld-" + name, text: `„${roh}“ ist kein gültiges Datum. Bitte TT.MM.JJJJ, MM.JJJJ oder JJJJ eingeben.`, art: "fehler" });
+  return { offen, fehler, bereit: !offen.length && !fehler.length };
+}
+
+/* ---------- Darstellung ---------- */
+const marke = (quelle, status) =>
+  status === "fehler" ? '<span class="marke marke-fehler">Fehler</span>'
+  : quelle === "kis" ? '<span class="marke marke-kis">aus KIS</span>'
+  : quelle === "auto" ? '<span class="marke marke-auto">Vorschlag – bitte bestätigen</span>'
+  : quelle === "arzt" ? '<span class="marke marke-arzt">von Ihnen</span>'
+  : status === "offen" ? '<span class="marke marke-offen">offen</span>' : "";
+const stern = f => f.pflicht ? ' <span class="stern" title="Pflichtangabe">*</span>' : "";
+
+function frageHtml(f, tiefe, praefix, e, status) {
+  if (f.typ === "group") return AUTO.has(f.id) ? "" : `<h3 class="gruppentitel tiefe-${tiefe}">${esc(f.text)}</h3>`;
+  if (!zeigbar(f)) return "";
+  const antw = praefix === "a" ? e.allg : e.spez, key = praefix + "." + f.id, hk = (praefix === "a" ? "allgemein." : "spezifisch.") + f.id;
+  const quelle = e.herkunft[hk], st = status["feld-" + key], wert = antw[f.id];
+  const opt = (f.optionen || []).filter(o => o.code !== "NASK");
+  let h = `<div id="feld-${esc(key)}" data-key="${esc(key)}" class="frage tiefe-${tiefe} quelle-${quelle || "leer"}${st ? " ist-" + st : ""}">`;
+  if (f.typ === "choice" && (istJaNein(f.optionen) || opt.length <= 6)) {
+    const jn = istJaNein(f.optionen), liste = jn ? [...opt].sort((a, b) => (a.code < b.code ? 1 : -1)) : opt;
+    h = h.replace('data-key=', 'data-art="radio" data-key=');
+    h += `<fieldset><legend>${esc(f.text)}${stern(f)} ${marke(quelle, st)}</legend><div class="optionen">`;
+    for (const k of liste) {
+      const gesperrt = NICHT_JA.has(f.id) && k.code === "yes";
+      h += `<label class="radio${gesperrt ? " gesperrt" : ""}"><input type="radio" id="r-${esc(key)}-${esc(k.code)}" name="${esc(key)}" value="${esc(k.code)}"${wert === k.code ? " checked" : ""}${gesperrt ? " disabled" : ""}> ${k.code === "yes" && jn ? "Ja" : k.code === "no" && jn ? "Nein" : esc(k.text)}</label>`;
+    }
+    h += `</div>${NICHT_JA.has(f.id) ? '<p class="klein">„Ja“ ist in dieser Programmversion noch nicht möglich; bitte in diesem Fall mit der Hygiene abstimmen.</p>' : ""}</fieldset>`;
+  } else if (f.typ === "choice") {
+    h += `<label for="in-${esc(key)}">${esc(f.text)}${stern(f)} ${marke(quelle, st)}</label><select id="in-${esc(key)}" name="${esc(key)}"><option value="">– bitte wählen –</option>`;
+    for (const k of opt) h += `<option value="${esc(k.code)}"${wert === k.code ? " selected" : ""}>${esc(k.text)}</option>`;
+    h += "</select>";
+  } else if (f.typ === "date") {
+    const anz = key in e.ungueltig ? e.ungueltig[key] : datumDe(wert);
+    h += `<label for="in-${esc(key)}">${esc(f.text)}${stern(f)} ${marke(quelle, st)}</label><input id="in-${esc(key)}" name="${esc(key)}" type="text" inputmode="numeric" autocomplete="off" placeholder="TT.MM.JJJJ" value="${esc(anz)}">`;
+  } else if (f.typ === "text") {
+    h += `<label for="in-${esc(key)}">${esc(f.text)}${stern(f)} ${marke(quelle, st)}</label><textarea id="in-${esc(key)}" name="${esc(key)}" rows="2" maxlength="500">${esc(wert || "")}</textarea>`;
+  }
+  if (quelle === "auto") h += `<button type="button" class="knopf klein bestaetigen" data-bestaetige="${esc(hk)}">Vorschlag bestätigen</button>`;
+  if (f.id === "immunization" && wert === "yes") {
+    h += `<div class="unterfrage" id="feld-impfstoff"><input type="hidden" name="impfung_gesendet" value="1">
+      <label for="in-impfstoff">Impfstoff <span class="stern">*</span></label>
+      <select id="in-impfstoff" name="impfstoff"><option value="">– bitte wählen –</option>${D.impfstoffe[e.k].map(k => `<option value="${esc(k.code)}"${e.impfstoff === k.code ? " selected" : ""}>${esc(k.text)}</option>`).join("")}</select>
+      <label for="in-impfdatum">Datum der (letzten) Impfung</label>
+      <input id="in-impfdatum" name="impfdatum" type="text" inputmode="numeric" autocomplete="off" placeholder="TT.MM.JJJJ" value="${esc("impfdatum" in e.ungueltig ? e.ungueltig.impfdatum : datumDe(e.impfdatum))}"></div>`;
+  }
+  return h + "</div>";
+}
+
+function seiteListe() {
+  const alle = D.faelle, zeilen = alle.filter(f => alleAnzeigen || f.weg !== "keiner");
+  const nicht = alle.filter(f => f.weg === "keiner").length;
+  const tipps = { CDFD: "Fast alles kommt aus dem KIS. Beantworten Sie die orangen Fragen und bestätigen Sie den gelben Vorschlag.", MYTD: "Zeigt Zusatzfragen, die nur bei Tuberkulose erscheinen.", MSVD: "Zeigt Symptome und Impfstatus, die nur bei Masern gefragt werden." };
+  let h = `<h1>Meldepflichtige Befunde</h1>
+  <p class="untertitel">${alleAnzeigen ? "Alle Fälle der letzten Tage." : "Nur Fälle, bei denen nach dem Regelwerk eine Meldung nötig sein kann."}
+  ${nicht ? `<button type="button" class="link" id="umschalten">${alleAnzeigen ? "Nur meldepflichtige anzeigen" : `Auch nicht meldepflichtige anzeigen (${nicht})`}</button>` : ""}</p>
+  <details class="info" open><summary>So probieren Sie die Demo aus</summary><ul>
+    <li>Klicken Sie bei einem Fall mit der Marke <span class="marke marke-weg-demis">DEMIS</span> auf <strong>Meldung bearbeiten</strong>.</li>
+    <li>Blau = kommt automatisch aus dem KIS · Gelb = Vorschlag, bitte bestätigen · Orange = noch offen · Grün = von Ihnen eingetragen.</li>
+    <li>Rechts sehen Sie laufend, was noch fehlt. Sind alle Punkte erledigt, geht es zur <strong>Vorschau</strong> und dann zu <strong>Freigeben</strong>.</li>
+    <li>Fälle mit <span class="marke marke-weg-sachsen">Landesmeldung Sachsen</span> oder <span class="marke marke-weg-klaerung">Klärung nötig</span> gehen nicht über DEMIS. Die App sagt das und erklärt warum.</li>
+  </ul></details>`;
+  h += `<div class="tabellenrahmen"><table class="liste"><caption class="nur-leser">Fälle mit Patient, Station, Diagnose und Meldeweg</caption>
+  <thead><tr><th scope="col">Patient</th><th scope="col">Station</th><th scope="col">Diagnose</th><th scope="col">Meldeweg</th><th scope="col">Aktion</th></tr></thead><tbody>`;
+  for (const f of zeilen) {
+    const nr = D.faelle.indexOf(f), demis = f.weg === "demis", ent = !!entwuerfe[nr];
+    h += `<tr class="weg-${f.weg}"><th scope="row">${esc(f.name)} <span class="klein">${esc(f.geburt)}${f.alter != null ? ` (${f.alter} J.)` : ""}</span>${f.verstorben ? ' <span class="marke marke-tod">verstorben</span>' : ""}</th>
+    <td>${esc(f.station || "–")}${f.laufend ? "" : ' <span class="klein">(Aufenthalt beendet)</span>'}</td>
+    <td>${f.diagnosen.map(d => `<div><strong>${esc(d.code || "–")}</strong> ${esc(d.text)}${d.verdacht ? ' <span class="marke marke-auto">Verdacht</span>' : ""}</div>`).join("") || "–"}</td>
+    <td><span class="marke marke-weg-${f.weg}">${esc(f.wegName)}${f.kuerzel ? ` (${f.kuerzel})` : ""}</span><div class="klein">${esc(f.grund)}</div>${demis ? `<div class="klein">${esc(tipps[f.kuerzel] || "")}</div>` : ""}</td>
+    <td><a class="knopf klein" href="#/fall/${nr}">${demis ? (ent ? "Weiter bearbeiten" : "Meldung bearbeiten") : "Ansehen"}</a></td></tr>`;
+  }
+  h += `</tbody></table></div>
+  <details class="info"><summary>Was zeigt diese Demo – und was nicht?</summary><ul>
+    <li><strong>Echt aus dem Programm übernommen:</strong> die Fragen und Antwortlisten der RKI-Fragebögen, die Vorbelegung aus den (erfundenen) KIS-Daten, die Zuordnung zum Meldeweg und das Aussehen der Oberfläche.</li>
+    <li><strong>Vereinfacht:</strong> Die Vollständigkeitsprüfung ist hier nachgebaut. Im echten Programm prüft zusätzlich ein amtlicher FHIR-Prüfer die fertige Meldung.</li>
+    <li><strong>Nicht enthalten:</strong> Anbindung an das KIS, Anmeldung, Versand an DEMIS, Landesmeldung Sachsen (PDF). Alle Patienten sind frei erfunden.</li>
+    <li>Die Eingaben bleiben nur in diesem Browser-Tab und verschwinden beim Schließen oder Neuladen.</li>
+  </ul></details>
+  <p class="fuss">Stand der Demo: Phase 4 von 7 (Oberfläche). Datum der Demo-Daten: ${esc(D.heute)}.</p>`;
+  return h;
+}
+
+function seiteKein(f) {
+  const hinweis = f.weg === "sachsen" ? "Die Landesmeldung (Formular als PDF und Datensatz für das Gesundheitsamt) wird in der nächsten Programmversion (Phase 6) angeboten. Bis dahin bitte das Papierformular verwenden."
+    : f.weg === "klaerung" ? "Bitte mit der Krankenhaushygiene klären. Das Landesformular enthält eine Zeile für „zwei oder mehr nosokomiale Infektionen“." : "";
+  return `<p><a href="#/">← Zurück zur Arbeitsliste</a></p><h1>${esc(f.patient.anzeigename)}</h1>
+  <section class="karte quelle-kis"><h2>Meldeweg: ${esc(f.wegName)}</h2><p>${esc(f.grund)}</p>${hinweis ? `<p class="hinweis">${esc(hinweis)}</p>` : ""}
+  <dl class="daten"><dt>Geburtsdatum</dt><dd>${esc(f.geburt)}${f.alter != null ? ` (${f.alter} Jahre)` : ""}</dd><dt>Aktuelle Station</dt><dd>${esc(f.station || "–")}</dd>
+  ${f.diagnosen.map(d => `<dt>Diagnose</dt><dd>${esc(d.code)} ${esc(d.text)}</dd>`).join("")}</dl></section>`;
+}
+
+function seiteBogen(e) {
+  const f = e.fall, st = bewerten(e), status = {};
+  for (const o of st.fehler) status[o.ziel] = "fehler";
+  for (const o of st.offen) status[o.ziel] = status[o.ziel] || "offen";
+  const dq = e.fall.start.diagnoseKis ? "kis" : null;
+  const q = n => e.herkunft[n] || (n === "erkrankungsbeginn" ? (e.beginn ? dq : null) : n === "diagnosedatum" ? (e.diagnosedatum ? dq : null) : null);
+  let h = `<p><a href="#/">← Zurück zur Arbeitsliste</a></p><div id="bogen" class="bogen-raster"><form id="bogenform" class="bogenformular" autocomplete="off">`;
+  h += `<section class="block quelle-kis"><h2>Aus dem KIS übernommen <span class="marke marke-kis">aus KIS</span></h2><dl class="daten">
+    <dt>Patient</dt><dd><strong>${esc(f.patient.anzeigename)}</strong></dd><dt>Geburtsdatum</dt><dd>${esc(f.geburt)}${f.alter != null ? ` (${f.alter} Jahre)` : ""}</dd>
+    <dt>Geschlecht</dt><dd>${esc(f.patient.geschlecht)}</dd><dt>Wohnanschrift</dt><dd>${esc(f.patient.adresse)}</dd><dt>Telefon</dt><dd>${esc(f.patient.telefon)}</dd>
+    <dt>Aufnahme</dt><dd>${esc(f.aufnahme)}${f.ende ? " bis " + esc(f.ende) : ""}</dd>
+    <dt>Stationen</dt><dd>${f.stationen.map(s => esc(s.name) + (s.intensiv ? " (Intensiv)" : "")).join(" → ") || "–"}</dd>
+    ${f.diagnosen.map(d => `<dt>Diagnose</dt><dd>${esc(d.code || "–")} ${esc(d.text)}${d.verdacht ? " (Verdacht)" : ""}</dd>`).join("")}
+    ${f.labor.map(l => `<dt>Labor</dt><dd>${esc(l.text)}</dd>`).join("")}</dl></section>`;
+  const datumFeld = (name, text, wert) => `<div id="feld-${name}" class="frage quelle-${q(name) || "leer"}${status["feld-" + name] ? " ist-fehler" : ""}">
+    <label for="in-${name}">${text} ${marke(q(name), status["feld-" + name])}</label>
+    <input id="in-${name}" name="${name}" type="text" inputmode="numeric" autocomplete="off" placeholder="TT.MM.JJJJ" value="${esc(name in e.ungueltig ? e.ungueltig[name] : datumDe(wert))}"></div>`;
+  h += `<section class="block"><h2>Erkrankung</h2>
+    <div id="feld-verdacht" class="frage quelle-${e.herkunft.verdacht || dq || "leer"}"><fieldset><legend>Art der Meldung ${marke(e.herkunft.verdacht || dq, null)}</legend><div class="optionen">
+      <label class="radio"><input type="radio" id="r-verdacht-nein" name="verdacht" value="nein"${!e.verdacht ? " checked" : ""}> Erkrankung</label>
+      <label class="radio"><input type="radio" id="r-verdacht-ja" name="verdacht" value="ja"${e.verdacht ? " checked" : ""}> Verdacht einer Erkrankung</label></div></fieldset></div>
+    ${datumFeld("erkrankungsbeginn", "Erkrankt am", e.beginn)}${datumFeld("diagnosedatum", "Diagnose gestellt am", e.diagnosedatum)}`;
+  if (e.k === "MSVD") {
+    h += `<div id="feld-symptome" class="frage quelle-${e.symptome.length ? "arzt" : "leer"}"><input type="hidden" name="symptom_gesendet" value="1"><fieldset>
+      <legend>Symptome (Masern) ${marke(e.symptome.length ? "arzt" : null, null)}</legend><div class="optionen mehrspaltig">
+      ${D.symptome.map(s => `<label class="radio"><input type="checkbox" id="c-${esc(s.code)}" name="symptom" value="${esc(s.code)}"${e.symptome.includes(s.code) ? " checked" : ""}> ${esc(s.text)}</label>`).join("")}</div></fieldset></div>`;
+  }
+  h += `<div class="frage quelle-${e.hinweis ? "arzt" : "leer"}"><label for="in-diagnosehinweis">Hinweis zur Diagnose (freiwillig)</label>
+    <textarea id="in-diagnosehinweis" name="diagnosehinweis" rows="2" maxlength="500" placeholder="Wird nur gesendet, wenn Sie hier etwas eintragen. Bitte keine zusätzlichen Personendaten.">${esc(e.hinweis)}</textarea></div></section>`;
+  const abschnitt = (titel, fragen, antw, praefix) =>
+    `<section class="block"><h2>${titel}</h2>${sichtbar(fragen, antw).map(({ f, tiefe }) => frageHtml(f, tiefe, praefix, e, status)).join("")}</section>`;
+  h += abschnitt("Allgemeine klinische und epidemiologische Angaben", D.fragebogen.allgemein, e.allg, "a");
+  h += abschnitt(`Angaben zur Erkrankung (${esc(D.krankheit[e.k])})`, D.fragebogen[e.k], e.spez, "s");
+  h += `</form><aside class="stand"><h2>Stand der Meldung</h2><div aria-live="polite">`;
+  if (st.fehler.length) h += `<p class="meldung fehler" role="alert">${st.fehler.length} Fehler müssen behoben werden:</p><ul class="liste-offen">${st.fehler.map(o => `<li><a href="#" data-ziel="${esc(o.ziel)}">${esc(o.text)}</a></li>`).join("")}</ul>`;
+  if (st.offen.length) h += `<p class="meldung offen">Noch ${st.offen.length} ${st.offen.length === 1 ? "Punkt" : "Punkte"} offen:</p><ul class="liste-offen">${st.offen.map(o => `<li><a href="#" data-ziel="${esc(o.ziel)}">${esc(o.text)}</a></li>`).join("")}</ul>`;
+  h += st.bereit ? `<p class="meldung ok">Alles beantwortet.</p><a class="knopf gross" href="#/vorschau/${e.nr}">Weiter zur Vorschau</a>` : '<span class="knopf gross gesperrt" role="note" aria-disabled="true">Weiter zur Vorschau</span>';
+  h += `</div>`;
+  if (f.hinweise.length) h += `<h3>Hinweise zu den KIS-Daten</h3><ul class="hinweise">${f.hinweise.map(x => `<li>${esc(x)}</li>`).join("")}</ul>`;
+  h += `<h3>Farben</h3><ul class="legende"><li><span class="marke marke-kis">aus KIS</span> automatisch übernommen</li><li><span class="marke marke-auto">Vorschlag</span> bitte bestätigen</li><li><span class="marke marke-arzt">von Ihnen</span> von Ihnen angegeben</li><li><span class="marke marke-offen">offen</span> noch zu beantworten</li></ul>
+    <div class="verwerfen"><button type="button" class="knopf klein sekundaer" id="verwerfen">Entwurf verwerfen</button></div></aside></div>`;
+  return h;
+}
+
+function antwortText(f, v) {
+  if (f.typ === "choice") { const o = (f.optionen || []).find(x => x.code === v); return o ? o.text : v; }
+  if (f.typ === "date") return datumDe(v);
+  return v;
+}
+function seiteVorschau(e) {
+  const f = e.fall, p = f.patient, ab = {};
+  ab["Betroffene Person"] = [["Name", p.name], ["Geburtsdatum", f.geburt || "–"], ["Geschlecht", p.geschlecht], ["Wohnanschrift", p.adresse], ["Derzeitiger Aufenthaltsort", "Krankenhaus (siehe unten)"], ["Telefon", p.telefon]];
+  const er = [["Meldetatbestand", D.tatbestand[e.k]], ["Art der Meldung", e.verdacht ? "Verdacht einer Erkrankung" : "Erkrankung"]];
+  if (e.beginn) er.push(["Erkrankungsbeginn", datumDe(e.beginn)]);
+  if (e.diagnosedatum) er.push(["Diagnosedatum", datumDe(e.diagnosedatum)]);
+  for (const s of e.symptome) er.push(["Symptom", (D.symptome.find(x => x.code === s) || {}).text || s]);
+  if (e.hinweis) er.push(["Hinweis", e.hinweis]);
+  ab["Erkrankung"] = er;
+  if (e.impfstoff) { const z = [["Impfstoff", (D.impfstoffe[e.k].find(x => x.code === e.impfstoff) || {}).text || e.impfstoff]]; if (e.impfdatum) z.push(["Datum der Impfung", datumDe(e.impfdatum)]); ab["Impfung"] = z; }
+  ab["Krankenhausaufenthalt"] = f.stationen.map(s => [s.name, `${s.von} bis ${s.bis}`]);
+  for (const [titel, fragen, antw] of [["Allgemeine klinische Angaben", D.fragebogen.allgemein, e.allg], ["Krankheitsspezifische Angaben", D.fragebogen[e.k], e.spez]]) {
+    ab[titel] = sichtbar(fragen, antw).filter(x => zeigbar(x.f) && antw[x.f.id] !== undefined && antw[x.f.id] !== "NASK").map(x => [x.f.text, antwortText(x.f, antw[x.f.id]), x.tiefe]);
+  }
+  ab["Melder"] = [["Einrichtung", D.melder.einrichtung], ["Meldende Person", D.melder.person]];
+  let h = `<p><a href="#/fall/${e.nr}">← Zurück zum Meldebogen</a></p><h1>Vorschau der Meldung</h1><p class="untertitel">So würde die Meldung an DEMIS übermittelt. Bitte prüfen Sie die Angaben.</p>`;
+  for (const [titel, zeilen] of Object.entries(ab)) if (zeilen.length)
+    h += `<section class="block"><h2>${esc(titel)}</h2><dl class="daten">${zeilen.map(z => `<dt class="tiefe-${z[2] || 0}">${esc(z[0])}</dt><dd>${esc(z[1])}</dd>`).join("")}</dl></section>`;
+  h += `<section class="karte"><p class="meldung ok" role="status">Alle Pflichtangaben sind beantwortet.</p>
+    <button type="button" class="knopf gross" id="freigeben">Freigeben</button> <a class="knopf sekundaer" href="#/fall/${e.nr}">Zurück und ändern</a>
+    <p class="klein">Demo: „Freigeben“ sendet nichts. Im echten Programm folgt der Versand an DEMIS erst nach Einrichtung des Zertifikats.</p></section>`;
+  return h;
+}
+
+function seiteFertig(dauer, name) {
+  return `<section class="karte"><h1>Meldung freigegeben</h1><p class="meldung ok" role="status">Die Meldung für ${esc(name)} wurde geprüft und freigegeben.</p>
+  <p><strong>Wichtig:</strong> Dies ist eine Demo. Es wurde <strong>nichts gesendet</strong> und nichts gespeichert.</p>
+  <p>Bearbeitungszeit in der Demo: <strong>${Math.floor(dauer / 60)}:${String(dauer % 60).padStart(2, "0")} Minuten</strong> (Ziel im echten Betrieb: unter 2 Minuten).</p>
+  <p><a class="knopf" href="#/">Zurück zur Arbeitsliste</a></p></section>`;
+}
+
+/* ---------- Steuerung ---------- */
+const wurzel = document.getElementById("inhalt");
+function zeige(html) {
+  const y = window.scrollY, aktiv = document.activeElement && document.activeElement.id;
+  wurzel.innerHTML = html;
+  window.scrollTo(0, y);
+  if (aktiv) { const el = document.getElementById(aktiv); if (el) el.focus({ preventScroll: true }); }
+}
+function route() {
+  const [, art, nr] = (location.hash || "#/").split("/"), f = D.faelle[+nr];
+  document.title = "DEMIS-Meldeassistent – Klick-Demo";
+  let e = entwuerfe[nr];
+  if (art === "fall" && f) {
+    if (f.weg !== "demis") return zeige(seiteKein(f));
+    e = entwuerfe[nr] = e || neuerEntwurf(+nr);
+    return zeige(seiteBogen(e));
+  }
+  if (art === "vorschau" && e && bewerten(e).bereit) return zeige(seiteVorschau(e)), window.scrollTo(0, 0);
+  if (art === "vorschau" && e) { location.hash = "#/fall/" + nr; return; }
+  zeige(seiteListe());
+}
+window.addEventListener("hashchange", () => { route(); window.scrollTo(0, 0); });
+neustart.addEventListener("click", () => { entwuerfe = {}; alleAnzeigen = false; location.hash = "#/"; route(); });
+
+wurzel.addEventListener("change", ev => {
+  const form = ev.target.closest("#bogenform"); if (!form) return;
+  const nr = +location.hash.split("/")[2]; uebernehmen(entwuerfe[nr], form); zeige(seiteBogen(entwuerfe[nr]));
+});
+wurzel.addEventListener("submit", ev => ev.preventDefault());
+wurzel.addEventListener("click", ev => {
+  const t = ev.target.closest("[data-ziel],[data-bestaetige],#verwerfen,#freigeben,#umschalten"); if (!t) return;
+  const nr = +location.hash.split("/")[2], e = entwuerfe[nr];
+  if (t.dataset.ziel) { ev.preventDefault(); const z = document.getElementById(t.dataset.ziel); if (z) { z.scrollIntoView({ block: "center", behavior: "smooth" }); const i = z.querySelector("input,select,textarea"); if (i) i.focus({ preventScroll: true }); } }
+  else if (t.dataset.bestaetige) { e.herkunft[t.dataset.bestaetige] = "arzt"; zeige(seiteBogen(e)); }
+  else if (t.id === "verwerfen") { delete entwuerfe[nr]; location.hash = "#/"; }
+  else if (t.id === "freigeben") { const dauer = Math.round((Date.now() - e.start) / 1000); const name = e.fall.patient.anzeigename; delete entwuerfe[nr]; zeige(seiteFertig(dauer, name)); window.scrollTo(0, 0); history.replaceState(null, "", "#/fertig"); }
+  else if (t.id === "umschalten") { alleAnzeigen = !alleAnzeigen; zeige(seiteListe()); }
+});
+route();
+</script>
+</body>
+</html>

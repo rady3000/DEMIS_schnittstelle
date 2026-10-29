@@ -69,3 +69,6 @@
 - Testfälle festgelegt: 7 Fälle (3× DEMIS, 1× DEMIS mit Todesfolge, Influenza und MRGN über Sachsen, Norovirus als Rückfallzweig).
 - Korrektur: Norovirus fällt nicht unter die sächsische Verordnung.
 - Landesformular vom Auftraggeber bereitgestellt (`vorlagen/LUA-HM-Arzt-Meldebogen.pdf`) und ins Feldmapping eingearbeitet (V/E/T-Matrix, § 6 Abs. 3 im Formular).
+
+## Klick-Demo (zwischen Phase 4 und 5)
+- `demo/DEMIS-Meldeassistent-Klickdemo.html`: eine einzelne HTML-Datei ohne Installation für Vorführungen. Erzeugt von `tools/klickdemo_bauen.py` (Vorlage: `tools/klickdemo/vorlage.html`) aus den echten Fragebögen, dem Schein-KIS und dem Regelwerk. Sendet nichts, speichert nichts.
